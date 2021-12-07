@@ -93,6 +93,9 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build",
+    "serve": "node server.js",
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.js src/**/*.jsx",
     "lint:fix": "eslint src/**/*.js --fix"
@@ -122,5 +125,5 @@
       "last 1 safari version"
     ]
   },
-  "homepage": ""
+  "homepage": "."
 }

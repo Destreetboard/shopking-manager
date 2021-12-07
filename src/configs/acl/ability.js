@@ -6,7 +6,9 @@ import jwtDecode from "jwt-decode";
 // * Handles auto fetching previous abilities if already logged in user
 // ? You can update this if you store user abilities to more secure place
 // ! Anyone can update localStorage so be careful and please update this
-const userData = jwtDecode(localStorage.getItem("auth"));
+const userData = localStorage.getItem("auth")
+  ? jwtDecode(localStorage.getItem("auth"))
+  : null;
 const existingAbility = userData
   ? userData.role === "admin" || userData.role === "staff"
     ? [
