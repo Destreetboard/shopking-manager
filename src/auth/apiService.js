@@ -8,8 +8,8 @@ apiService.interceptors.request.use(
   (config) => {
     const auth = localStorage.getItem("auth");
     if (auth) {
-      config.headers.Authorization = `Bearer ${auth}`;
     }
+    config.headers.Authorization = `Bearer ${JSON.parse(auth)}`;
     return config;
   },
   (err) => {

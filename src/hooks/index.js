@@ -6,5 +6,5 @@ export * from "./useLogin";
 // export * from "./useLocations";
 // export * from "./useCategories";
 // export * from "./useOrderDetails";
-// export * from "./useUser";
+export * from "./useUser";
 // export * from "./usePassword";

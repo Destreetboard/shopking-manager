@@ -35,23 +35,27 @@ import {
 
 // ** Default Avatar Image
 import defaultAvatar from "@src/assets/images/portrait/small/avatar-s-11.jpg";
+import { useUser } from "@src/hooks";
 
 const UserDropdown = () => {
   // ** Store Vars
   const dispatch = useDispatch();
-
-  // ** State
   const [userData, setUserData] = useState(null);
+
+  const { getUser } = useUser((success) => {
+    setUserData(success);
+  });
 
   //** ComponentDidMount
   useEffect(() => {
     if (isUserLoggedIn() !== null) {
-      setUserData(jwtDecode(localStorage.getItem("auth")));
+      getUser();
+      // setUserData(jwtDecode(localStorage.getItem("auth")));
     }
   }, []);
 
   //** Vars
-  const userAvatar = (userData && userData.avatar) || defaultAvatar;
+  const userAvatar = (userData && userData.photo) || defaultAvatar;
 
   return (
     <UncontrolledDropdown tag="li" className="dropdown-user nav-item">
@@ -63,7 +67,7 @@ const UserDropdown = () => {
       >
         <div className="user-nav d-sm-flex d-none">
           <span className="user-name fw-bold">
-            {(userData && userData["username"]) || "John Doe"}
+            {(userData && `${userData.firstname} ${userData.lastname}`) || ""}
           </span>
           <span className="user-status">
             {(userData && userData.role) || "Admin"}
