@@ -18,10 +18,10 @@
     "static/js/6.b664c86e.chunk.js": "/shopking-manager/static/js/6.b664c86e.chunk.js",
     "static/js/6.b664c86e.chunk.js.map": "/shopking-manager/static/js/6.b664c86e.chunk.js.map",
     "main.css": "/shopking-manager/static/css/main.dcd172f1.chunk.css",
-    "main.js": "/shopking-manager/static/js/main.1ca41968.chunk.js",
-    "main.js.map": "/shopking-manager/static/js/main.1ca41968.chunk.js.map",
-    "runtime-main.js": "/shopking-manager/static/js/runtime-main.32e00b11.js",
-    "runtime-main.js.map": "/shopking-manager/static/js/runtime-main.32e00b11.js.map",
+    "main.js": "/shopking-manager/static/js/main.f587d9ec.chunk.js",
+    "main.js.map": "/shopking-manager/static/js/main.f587d9ec.chunk.js.map",
+    "runtime-main.js": "/shopking-manager/static/js/runtime-main.75ce59f7.js",
+    "runtime-main.js.map": "/shopking-manager/static/js/runtime-main.75ce59f7.js.map",
     "static/css/9.49a3efab.chunk.css": "/shopking-manager/static/css/9.49a3efab.chunk.css",
     "static/js/9.1c38ef73.chunk.js": "/shopking-manager/static/js/9.1c38ef73.chunk.js",
     "static/js/9.1c38ef73.chunk.js.map": "/shopking-manager/static/js/9.1c38ef73.chunk.js.map",
@@ -37,8 +37,8 @@
     "static/js/13.3def32e0.chunk.js": "/shopking-manager/static/js/13.3def32e0.chunk.js",
     "static/js/13.3def32e0.chunk.js.map": "/shopking-manager/static/js/13.3def32e0.chunk.js.map",
     "static/css/14.9a19364c.chunk.css": "/shopking-manager/static/css/14.9a19364c.chunk.css",
-    "static/js/14.48c8e019.chunk.js": "/shopking-manager/static/js/14.48c8e019.chunk.js",
-    "static/js/14.48c8e019.chunk.js.map": "/shopking-manager/static/js/14.48c8e019.chunk.js.map",
+    "static/js/14.ffffddc0.chunk.js": "/shopking-manager/static/js/14.ffffddc0.chunk.js",
+    "static/js/14.ffffddc0.chunk.js.map": "/shopking-manager/static/js/14.ffffddc0.chunk.js.map",
     "static/css/15.c5c82e0d.chunk.css": "/shopking-manager/static/css/15.c5c82e0d.chunk.css",
     "static/js/15.f8b54613.chunk.js": "/shopking-manager/static/js/15.f8b54613.chunk.js",
     "static/js/15.f8b54613.chunk.js.map": "/shopking-manager/static/js/15.f8b54613.chunk.js.map",
@@ -303,10 +303,10 @@
     "static/media/vuexy-login-bg.jpg": "/shopking-manager/static/media/vuexy-login-bg.640b7b14.jpg"
   },
   "entrypoints": [
-    "static/js/runtime-main.32e00b11.js",
+    "static/js/runtime-main.75ce59f7.js",
     "static/css/9.49a3efab.chunk.css",
     "static/js/9.1c38ef73.chunk.js",
     "static/css/main.dcd172f1.chunk.css",
-    "static/js/main.1ca41968.chunk.js"
+    "static/js/main.f587d9ec.chunk.js"
   ]
 }
