@@ -12,7 +12,7 @@ import LayoutWrapper from "@layouts/components/layout-wrapper";
 
 // ** Router Components
 import {
-  BrowserRouter as AppRouter,
+  HashRouter as AppRouter,
   Route,
   Switch,
   Redirect,
