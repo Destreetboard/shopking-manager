@@ -14,37 +14,48 @@ import {
 } from "reactstrap";
 
 // ** Add New Modal Component
-import EditCategoryModal from "./EditCategoryModal";
+import EditSubLocationModal from "../sublocations/EditSubLocationModal";
 
 // ** Third Party Components
 import ReactPaginate from "react-paginate";
 import DataTable from "react-data-table-component";
 
-import { useCategories } from "../../hooks";
+import { useLocations } from "../../../hooks";
 
-const CategoriesTable = () => {
+const SubLocationTable = () => {
   // ** States
   const [currentPage, setCurrentPage] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [category, setCategory] = useState(null);
+  const [locations, setLocations] = useState([]);
+  const [location, setLocation] = useState(null);
   const [data, setData] = useState([]);
 
-  const { fetchCategories, isFetchingCategories } = useCategories((success) => {
+  const { fetchLocations, isLoading } = useLocations((success) => {
     setData(success);
+    setLocations(success);
   });
 
   useEffect(() => {
-    fetchCategories();
+    fetchLocations();
   }, []);
 
   const columns = useMemo(
     () => [
       {
-        name: "Name",
-        minWidth: "250px",
-        sortable: (row) => row.name,
-        selector: (row) => row.name,
+        name: "Location",
+        sortable: (row) => locations.find((l) => row._id === l._id),
+        selector: (row) => locations.find((l) => row._id === l._id),
+      },
+      {
+        name: "Address",
+        sortable: (row) => row.address,
+        selector: (row) => row.address,
+      },
+      {
+        name: "Price",
+        sortable: (row) => row.price,
+        selector: (row) => row.price,
       },
       {
         name: "Actions",
@@ -55,7 +66,7 @@ const CategoriesTable = () => {
               <Edit
                 size={15}
                 onClick={(e) => {
-                  setCategory(row);
+                  setLocation(row);
                 }}
               />
               <Trash2
@@ -168,15 +179,16 @@ const CategoriesTable = () => {
           />
         </div>
       </Card>
-      {category && (
-        <EditCategoryModal
-          category={category}
+      {location && (
+        <EditSubLocationModal
+          location={location}
+          locations={data}
           open={location !== null}
-          handleModal={() => setCategory(null)}
+          handleModal={() => setLocation(null)}
         />
       )}
     </Fragment>
   );
 };
 
-export default CategoriesTable;
+export default SubLocationTable;

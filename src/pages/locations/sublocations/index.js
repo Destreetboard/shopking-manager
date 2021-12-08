@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useState } from "react";
+import { Fragment, useState, useMemo, useEffect } from "react";
 
 // ** Custom Components
 import Breadcrumbs from "@components/breadcrumbs";
@@ -17,20 +17,29 @@ import {
 } from "reactstrap";
 import Select from "react-select";
 import SubLocationsTable from "./sublocations-table";
-
-const locationOptions = [
-  { value: "", label: "Select Location" },
-  { value: "basic", label: "Basic" },
-  { value: "company", label: "Company" },
-  { value: "enterprise", label: "Enterprise" },
-  { value: "team", label: "Team" },
-];
+import { useLocations } from "../../../hooks";
 
 const SubLocations = () => {
   const [location, setLocation] = useState({
     value: "",
     label: "Select Location",
   });
+  const [locations, setLocations] = useState([]);
+
+  const { fetchLocations, isLoading } = useLocations((success) => {
+    setLocations(success);
+  });
+
+  const locationOptions = useMemo(() => {
+    return locations.map((l) => ({
+      value: l._id,
+      label: l.name,
+    }));
+  }, [locations]);
+
+  useEffect(() => {
+    fetchLocations();
+  }, []);
 
   return (
     <Fragment>
@@ -71,6 +80,17 @@ const SubLocations = () => {
                   name="name"
                   id="sub-location-name"
                   placeholder="E.g: Divine Favour Lodge."
+                />
+              </Col>
+              <Col md="6" sm="12" className="mb-1">
+                <Label className="form-label" for="nameMulti">
+                  Sub Location Price
+                </Label>
+                <Input
+                  type="number"
+                  name="price"
+                  id="sub-location-price"
+                  placeholder="E.g: 1000"
                 />
               </Col>
               <Col sm="12">

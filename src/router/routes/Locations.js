@@ -12,8 +12,9 @@ const LocationsRoutes = [
     exact: true,
   },
   {
-    path: "/dashboard/locations/sub-locations",
+    path: "/dashboard/locations/:id",
     component: lazy(() => import("../../pages/locations/detail")),
+    exact: true,
   },
 ];
 
