@@ -12,13 +12,18 @@ import {
 } from "reactstrap";
 import "@styles/react/libs/flatpickr/flatpickr.scss";
 import { useCategories } from "../../hooks";
+import { useDispatch } from "react-redux";
+import { setCategories } from "@store/categories";
 
 const EditLocationModal = ({ open, handleModal, category }) => {
+  const dispatch = useDispatch();
+
   const [name, setName] = useState(category.name);
   const [error, setError] = useState("");
 
   const { updateCategory, isUpdatingCategory } = useCategories(
-    () => {
+    (success) => {
+      dispatch(setCategories(success));
       return handleModal && handleModal();
     },
     (err) => {
@@ -69,7 +74,7 @@ const EditLocationModal = ({ open, handleModal, category }) => {
             id="name"
             placeholder="Gloceries"
           />
-          <span class="text-danger small">{error}</span>
+          <span className="text-danger small">{error}</span>
         </div>
         <Button
           disabled={isUpdatingCategory}

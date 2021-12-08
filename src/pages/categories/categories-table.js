@@ -23,14 +23,17 @@ import ReactPaginate from "react-paginate";
 import DataTable from "react-data-table-component";
 
 import { useCategories } from "../../hooks";
+import { useSelector, useDispatch } from "react-redux";
+import { setCategories } from "@store/categories";
 
 const CategoriesTable = () => {
+  const { categories: data } = useSelector((state) => state);
+  const dispatch = useDispatch();
   // ** States
   const [currentPage, setCurrentPage] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [category, setCategory] = useState(null);
-  const [data, setData] = useState([]);
   const [error, setError] = useState("");
 
   const {
@@ -40,7 +43,7 @@ const CategoriesTable = () => {
     isLoadingCategories,
   } = useCategories(
     (success) => {
-      setData(success);
+      dispatch(setCategories(success));
     },
     (err) => {
       setError(err.message);

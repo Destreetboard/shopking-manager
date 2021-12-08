@@ -18,13 +18,18 @@ import {
   Label,
   Spinner,
 } from "reactstrap";
+import { useDispatch } from "react-redux";
+import { setCategories } from "@store/categories";
 
 const Categories = () => {
+  const dispatch = useDispatch();
+
   const [name, setName] = React.useState("");
   const [error, setError] = React.useState("");
   const { createCategory, isLoadingCategories } = useCategories(
-    () => {
-      setName(false);
+    (success) => {
+      setName("");
+      dispatch(setCategories(success));
     },
     (err) => {
       setError(err.message);
@@ -34,7 +39,7 @@ const Categories = () => {
   const handleCreateCategory = () => {
     setError("");
     if (!name || name.length < 3) {
-      setError("Category name m,ust be more that 3 characters.");
+      setError("Category name must be more that 3 characters.");
       return;
     }
     createCategory({ name });
@@ -68,14 +73,13 @@ const Categories = () => {
                   id="category-name"
                   placeholder="E.g: Gloceries."
                 />
-                <span class="text-danger small">{error}</span>
+                <span className="text-danger small">{error}</span>
               </Col>
               <Col sm="12">
                 <div className="d-flex">
                   <Button
                     className="me-1"
                     color="primary"
-                    type="submit"
                     disabled={isLoadingCategories}
                     onClick={handleCreateCategory}
                   >
