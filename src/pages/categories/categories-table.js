@@ -11,6 +11,8 @@ import {
   Label,
   CardTitle,
   CardHeader,
+  Alert,
+  Spinner,
 } from "reactstrap";
 
 // ** Add New Modal Component
@@ -29,14 +31,31 @@ const CategoriesTable = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [category, setCategory] = useState(null);
   const [data, setData] = useState([]);
+  const [error, setError] = useState("");
 
-  const { fetchCategories, isFetchingCategories } = useCategories((success) => {
-    setData(success);
-  });
+  const {
+    fetchCategories,
+    deleteCategory,
+    isDeletingCategory,
+    isLoadingCategories,
+  } = useCategories(
+    (success) => {
+      setData(success);
+    },
+    (err) => {
+      setError(err.message);
+    }
+  );
 
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  const handleDeleteCategory = (id) => {
+    if (confirm("Are you sure you want to delete this category?")) {
+      deleteCategory(id);
+    }
+  };
 
   const columns = useMemo(
     () => [
@@ -61,7 +80,7 @@ const CategoriesTable = () => {
               <Trash2
                 className="text-danger mx-1"
                 size={15}
-                onClick={(e) => alert("hello")}
+                onClick={() => handleDeleteCategory(row._id)}
               />
             </div>
           );
@@ -133,8 +152,21 @@ const CategoriesTable = () => {
     <Fragment>
       <Card>
         <CardHeader className="flex-md-row flex-column align-md-items-center align-items-start">
-          <CardTitle tag="h4">Locations</CardTitle>
+          <CardTitle tag="h4">Categroies</CardTitle>
         </CardHeader>
+        {error ? (
+          <Alert className="text-center" color="danger">
+            {error}
+            {setTimeout(() => {
+              setError("");
+            }, 5000)}
+          </Alert>
+        ) : null}
+        {isLoadingCategories || isDeletingCategory ? (
+          <div className="text-center">
+            <Spinner color="primary" />
+          </div>
+        ) : null}
         <Row className="justify-content-end mx-0">
           <Col
             className="d-flex align-items-center justify-content-end mt-1"

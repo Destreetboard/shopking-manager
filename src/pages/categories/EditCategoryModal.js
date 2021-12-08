@@ -1,10 +1,6 @@
 // ** React Imports
 import { useState } from "react";
-
-// ** Third Party Components
 import { User, X } from "react-feather";
-
-// ** Reactstrap Imports
 import {
   Modal,
   Input,
@@ -12,13 +8,32 @@ import {
   Button,
   ModalHeader,
   ModalBody,
+  Spinner,
 } from "reactstrap";
-
-// ** Styles
 import "@styles/react/libs/flatpickr/flatpickr.scss";
+import { useCategories } from "../../hooks";
 
 const EditLocationModal = ({ open, handleModal, category }) => {
   const [name, setName] = useState(category.name);
+  const [error, setError] = useState("");
+
+  const { updateCategory, isUpdatingCategory } = useCategories(
+    () => {
+      return handleModal && handleModal();
+    },
+    (err) => {
+      setError(err.message);
+    }
+  );
+
+  const handleUpdateCategory = () => {
+    setError("");
+    if (!name || name.length < 3) {
+      setError("Category name m,ust be more that 3 characters.");
+      return;
+    }
+    updateCategory(category._id, { name });
+  };
 
   // ** Custom close btn
   const CloseBtn = (
@@ -50,14 +65,26 @@ const EditLocationModal = ({ open, handleModal, category }) => {
             onChange={(input) => setName(input.target.value)}
             name="name"
             value={name}
+            className={error ? "border-danger text-danger" : ""}
             id="name"
             placeholder="Gloceries"
           />
+          <span class="text-danger small">{error}</span>
         </div>
-        <Button className="me-1" color="primary" onClick={handleModal}>
-          Update
+        <Button
+          disabled={isUpdatingCategory}
+          className="me-1"
+          color="primary"
+          onClick={handleUpdateCategory}
+        >
+          {isUpdatingCategory ? <Spinner /> : "Update"}
         </Button>
-        <Button color="secondary" onClick={handleModal} outline>
+        <Button
+          disabled={isUpdatingCategory}
+          color="secondary"
+          onClick={handleModal}
+          outline
+        >
           Cancel
         </Button>
       </ModalBody>

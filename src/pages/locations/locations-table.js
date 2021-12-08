@@ -74,7 +74,7 @@ const LocationDTable = () => {
                 <DropdownMenu end>
                   <DropdownItem
                     tag="a"
-                    href={`/dashboard/locations/${row._id}`}
+                    href={`#/dashboard/locations/${row._id}/sub-locations`}
                     className="w-100"
                   >
                     <FileText size={15} />

@@ -1,6 +1,7 @@
 // ** React Imports
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import CategoriesTable from "./categories-table";
+import { useCategories } from "../../hooks";
 
 // ** Custom Components
 import Breadcrumbs from "@components/breadcrumbs";
@@ -15,9 +16,30 @@ import {
   Form,
   Button,
   Label,
+  Spinner,
 } from "reactstrap";
 
 const Categories = () => {
+  const [name, setName] = React.useState("");
+  const [error, setError] = React.useState("");
+  const { createCategory, isLoadingCategories } = useCategories(
+    () => {
+      setName(false);
+    },
+    (err) => {
+      setError(err.message);
+    }
+  );
+
+  const handleCreateCategory = () => {
+    setError("");
+    if (!name || name.length < 3) {
+      setError("Category name m,ust be more that 3 characters.");
+      return;
+    }
+    createCategory({ name });
+  };
+
   return (
     <Fragment>
       <Breadcrumbs
@@ -40,9 +62,13 @@ const Categories = () => {
                 <Input
                   type="text"
                   name="name"
+                  className={error ? "border-danger text-danger" : ""}
+                  value={name}
+                  onChange={(input) => setName(input.target.value)}
                   id="category-name"
                   placeholder="E.g: Gloceries."
                 />
+                <span class="text-danger small">{error}</span>
               </Col>
               <Col sm="12">
                 <div className="d-flex">
@@ -50,11 +76,17 @@ const Categories = () => {
                     className="me-1"
                     color="primary"
                     type="submit"
-                    onClick={(e) => e.preventDefault()}
+                    disabled={isLoadingCategories}
+                    onClick={handleCreateCategory}
                   >
-                    Create
+                    {isLoadingCategories ? <Spinner /> : "Create"}
                   </Button>
-                  <Button outline color="secondary" type="reset">
+                  <Button
+                    disabled={isLoadingCategories}
+                    outline
+                    color="secondary"
+                    type="reset"
+                  >
                     Clear
                   </Button>
                 </div>
