@@ -18,16 +18,21 @@ import {
 } from "reactstrap";
 import SubLocationsTable from "./sublocations-table";
 import { useHistory } from "react-router-dom";
-import { useSubLocations } from "../../../hooks";
+import { useSubLocations, useLocations } from "../../../hooks";
 
 const LocationSubLocations = ({ match }) => {
   const history = useHistory();
   const [location, setLocation] = useState({});
+  const [subLocations, setSubLocations] = useState([]);
 
-  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
   const [price, setPrice] = useState("");
   const [error, setError] = useState("");
-  const [isSubLocationCreated, setIsSubLocationCreated] = useState(false);
+
+  const { fetchLocation, isFetchingLocation } = useLocations((success) => {
+    setSubLocations(success.subLocations);
+    setLocation(success);
+  });
 
   useEffect(() => {
     const { id } = match.params;
@@ -36,11 +41,14 @@ const LocationSubLocations = ({ match }) => {
         pathname: "/dashboard/locations",
       });
     }
+    fetchLocation(id);
   }, []);
 
   const { createSubLocation, isCreatingSubLocation } = useSubLocations(
     () => {
-      setIsSubLocationCreated(!isSubLocationCreated);
+      fetchLocation(match.params.id);
+      setAddress("");
+      setPrice("");
     },
     (err) => {
       setError(err.message);
@@ -49,8 +57,8 @@ const LocationSubLocations = ({ match }) => {
 
   const handleCreateSubLocation = () => {
     setError("");
-    if (!name || name.length < 3) {
-      setError("Sub Location name must be more that 3 characters.");
+    if (!address || address.length < 3) {
+      setError("Sub Location address must be more that 3 characters.");
       return;
     }
     if (!price || parseInt(price) <= 0) {
@@ -58,7 +66,7 @@ const LocationSubLocations = ({ match }) => {
       return;
     }
 
-    createSubLocation(location._id, { name, price });
+    createSubLocation(location._id, { address, price });
   };
 
   return (
@@ -86,14 +94,14 @@ const LocationSubLocations = ({ match }) => {
             <Row>
               <Col md="6" sm="12" className="mb-1">
                 <Label className="form-label" for="nameMulti">
-                  Sub Location Name
+                  Sub Location Address
                 </Label>
                 <Input
                   type="text"
-                  name="name"
-                  value={name}
+                  name="address"
+                  value={address}
                   className={error ? "border-danger text-danger" : ""}
-                  onChange={(input) => setName(input.target.value)}
+                  onChange={(input) => setAddress(input.target.value)}
                   id="sub-location-name"
                   placeholder="E.g: Divine Favour Lodge."
                 />
@@ -141,9 +149,9 @@ const LocationSubLocations = ({ match }) => {
       </Card>
 
       <SubLocationsTable
-        isSubLocationCreated={isSubLocationCreated}
-        locationId={match.params.id}
-        pushLocation={setLocation}
+        isFetchingLocation={isFetchingLocation}
+        subLocations={subLocations}
+        location={location}
       />
     </Fragment>
   );

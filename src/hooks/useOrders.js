@@ -1,30 +1,21 @@
-import { apiService } from '@/services';
-import { OrderState } from '@/store/types';
-import * as React from 'react';
+import { apiService } from "../auth/apiService";
+import * as React from "react";
 
-type hookReturnType = (
-  success?: (data: OrderState) => void,
-  error?: (data: {message: string}) => void
-) => {
-  fetchOrders: () => void;
-  isLoading: boolean;
-};
-
-export const useOrders: hookReturnType = (success, error) => {
+export const useOrders = (success, error) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  
+
   const fetchOrders = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const res = await apiService.get('/orders');
+      const res = await apiService.get("/admin/orders");
       setIsLoading(false);
-      success && success(res.data.data.orders);
-    } catch (e: any) {
+      return success && success(res.data.data.orders);
+    } catch (e) {
       console.log(e);
       setIsLoading(false);
-      error && error(e.response.data);
+      return error && error(e.response.data);
     }
-  }
+  };
 
-  return { fetchOrders, isLoading};
-}
+  return { fetchOrders, isLoading };
+};

@@ -1,8 +1,5 @@
-// ** React Imports
 import { Fragment, useState, useEffect, useMemo } from "react";
 import { Edit, Trash2, ChevronDown } from "react-feather";
-
-// ** Reactstrap Imports
 import {
   Row,
   Col,
@@ -14,43 +11,22 @@ import {
   Alert,
   Spinner,
 } from "reactstrap";
-
-// ** Add New Modal Component
 import EditSubLocationModal from "../EditSubLocationModal";
-
-// ** Third Party Components
 import ReactPaginate from "react-paginate";
 import DataTable from "react-data-table-component";
-
-import { useLocations } from "../../../hooks";
+import { useSubLocations } from "../../../hooks";
 
 const SubLocationTable = ({
-  locationId,
-  pushLocation,
-  isSubLocationCreated,
+  location,
+  subLocations: data,
+  isFetchingLocation,
 }) => {
   // ** States
   const [currentPage, setCurrentPage] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [location, setLocation] = useState({});
   const [subLocation, setSubLocation] = useState(null);
   const [error, setError] = useState("");
-  const [data, setData] = useState([]);
-
-  const { fetchLocation, isFetchingLocation, isUpdatingLocation } =
-    useLocations((success) => {
-      setData(success.subLocations);
-      console.log(success.subLocations);
-      setLocation(success);
-      pushLocation(success);
-    });
-
-  useEffect(() => {
-    if (locationId) {
-      fetchLocation(locationId);
-    }
-  }, [isSubLocationCreated]);
 
   const columns = useMemo(
     () => [
@@ -73,7 +49,7 @@ const SubLocationTable = ({
               <Edit
                 size={15}
                 onClick={(e) => {
-                  setLocation(row);
+                  setSubLocation(row);
                 }}
               />
               <Trash2
@@ -161,7 +137,7 @@ const SubLocationTable = ({
             }, 5000)}
           </Alert>
         ) : null}
-        {isFetchingLocation || isUpdatingLocation ? (
+        {isFetchingLocation ? (
           <div className="text-center">
             <Spinner color="primary" />
           </div>

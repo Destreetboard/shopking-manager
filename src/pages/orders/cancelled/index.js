@@ -1,7 +1,6 @@
 // ** React Imports
 import { Link } from "react-router-dom";
 import { useState, useEffect, useMemo, Fragment } from "react";
-import StatsHorizontal from "@components/widgets/stats/StatsHorizontal";
 import ReactPaginate from "react-paginate";
 import {
   ChevronDown,
@@ -63,14 +62,15 @@ const renderClient = (row) => {
   }
 };
 
-const CompletedOrdersPage = () => {
+const DeclinedOrdersPage = () => {
   const dispatch = useDispatch();
   const { orders: storeOrders } = useSelector((state) => state);
 
-  const orders = useMemo(
-    () => storeOrders.filter((o) => o.status === "COMPLETED"),
-    [storeOrders]
-  );
+  const orders = useMemo(() => {
+    return storeOrders.filter(
+      (o) => o.status === "DECLINED" || o.status === "CANCELLED"
+    );
+  }, [storeOrders]);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [searchValue, setSearchValue] = useState("");
@@ -306,14 +306,14 @@ const CompletedOrdersPage = () => {
   return (
     <div>
       <Breadcrumbs
-        breadCrumbTitle="Completed Orders"
+        breadCrumbTitle="Cancelled Orders"
         breadCrumbParent="Order Mgnt"
-        breadCrumbActive="Completed Orders"
+        breadCrumbActive="Cancelled Orders"
       />
 
       <Card className="invoice-list-wrapper">
         <CardHeader className="flex-md-row flex-column align-md-items-center align-items-start">
-          <CardTitle tag="h4">Completed Orders</CardTitle>
+          <CardTitle tag="h4">Cancelled Orders</CardTitle>
         </CardHeader>
         <Row className="justify-content-end mx-0">
           <Col
@@ -360,4 +360,4 @@ const CompletedOrdersPage = () => {
   );
 };
 
-export default CompletedOrdersPage;
+export default DeclinedOrdersPage;

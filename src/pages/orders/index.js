@@ -1,425 +1,410 @@
 // ** React Imports
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-
-// ** Table Columns
-import { columns } from "./columns";
-
+import { useState, useEffect, useMemo, Fragment } from "react";
 import StatsHorizontal from "@components/widgets/stats/StatsHorizontal";
-
-// ** Third Party Components
 import ReactPaginate from "react-paginate";
-import { ChevronDown, User, UserCheck, UserPlus, UserX } from "react-feather";
-import DataTable from "react-data-table-component";
-
-// ** Reactstrap Imports
 import {
-  Button,
+  ChevronDown,
+  User,
+  UserCheck,
+  UserPlus,
+  UserX,
+  Eye,
+  TrendingUp,
+  CheckCircle,
+  Loader,
+  MoreHorizontal,
+  XCircle,
+  Check,
+  ShoppingCart,
+} from "react-feather";
+import DataTable from "react-data-table-component";
+import {
   Input,
   Row,
   Col,
   Card,
+  Label,
   CardHeader,
   CardTitle,
-  CardBody,
-  Label,
+  UncontrolledTooltip,
+  Spinner,
 } from "reactstrap";
-import Select from "react-select";
-
-// ** Store & Actions
-import { getData } from "./orders-store";
+import Avatar from "@components/avatar";
 import { useDispatch, useSelector } from "react-redux";
-
-// ** Styles
 import "@styles/react/apps/app-invoice.scss";
 import "@styles/react/libs/tables/react-dataTable-component.scss";
+import { useOrders } from "../../hooks";
+import { formatMoney } from "@utils";
+import { setOrders } from "@store/orders";
+import moment from "moment";
+import Breadcrumbs from "@components/breadcrumbs";
 
-const CustomHeader = ({
-  handleFilter,
-  value,
-  handleStatusValue,
-  statusValue,
-  handlePerPage,
-  rowsPerPage,
-}) => {
-  return (
-    <div className="invoice-list-table-header w-100 py-2">
-      <Row>
-        <Col lg="6" className="d-flex align-items-center px-0 px-lg-1">
-          <div className="d-flex align-items-center me-2">
-            <label htmlFor="rows-per-page">Show</label>
-            <Input
-              type="select"
-              id="rows-per-page"
-              value={rowsPerPage}
-              onChange={handlePerPage}
-              className="form-control ms-50 pe-3"
-            >
-              <option value="10">10</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-            </Input>
-          </div>
-          <Button tag={Link} to="/apps/invoice/add" color="primary">
-            Add Record
-          </Button>
-        </Col>
-        <Col
-          lg="6"
-          className="actions-right d-flex align-items-center justify-content-lg-end flex-lg-nowrap flex-wrap mt-lg-0 mt-1 pe-lg-1 p-0"
-        >
-          <div className="d-flex align-items-center">
-            <label htmlFor="search-invoice">Search</label>
-            <Input
-              id="search-invoice"
-              className="ms-50 me-2 w-100"
-              type="text"
-              value={value}
-              onChange={(e) => handleFilter(e.target.value)}
-              placeholder="Search Invoice"
-            />
-          </div>
-          <Input
-            className="w-auto "
-            type="select"
-            value={statusValue}
-            onChange={handleStatusValue}
-          >
-            <option value="">Select Status</option>
-            <option value="downloaded">Downloaded</option>
-            <option value="draft">Draft</option>
-            <option value="paid">Paid</option>
-            <option value="partial payment">Partial Payment</option>
-            <option value="past due">Past Due</option>
-            <option value="sent">Sent</option>
-          </Input>
-        </Col>
-      </Row>
-    </div>
-  );
-};
+// ** renders client column
+const renderClient = (row) => {
+  const stateNum = Math.floor(Math.random() * 5),
+    states = [
+      "light-success",
+      "light-danger",
+      "light-warning",
+      "light-info",
+      "light-primary",
+    ],
+    color = states[stateNum];
 
-const InvoiceList = () => {
-  // ** Store vars
-  const dispatch = useDispatch();
-  const store = useSelector((state) => state.invoice);
-
-  // ** States
-  const [value, setValue] = useState("");
-  const [sort, setSort] = useState("desc");
-  const [sortColumn, setSortColumn] = useState("id");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [statusValue, setStatusValue] = useState("");
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  useEffect(() => {
-    dispatch(
-      getData({
-        sort,
-        q: value,
-        sortColumn,
-        page: currentPage,
-        perPage: rowsPerPage,
-        status: statusValue,
-      })
-    );
-  }, [dispatch, store.data.length]);
-
-  const handleFilter = (val) => {
-    setValue(val);
-    dispatch(
-      getData({
-        sort,
-        q: val,
-        sortColumn,
-        page: currentPage,
-        perPage: rowsPerPage,
-        status: statusValue,
-      })
-    );
-  };
-
-  const handlePerPage = (e) => {
-    dispatch(
-      getData({
-        sort,
-        q: value,
-        sortColumn,
-        page: currentPage,
-        status: statusValue,
-        perPage: parseInt(e.target.value),
-      })
-    );
-    setRowsPerPage(parseInt(e.target.value));
-  };
-
-  const handleStatusValue = (e) => {
-    setStatusValue(e.target.value);
-    dispatch(
-      getData({
-        sort,
-        q: value,
-        sortColumn,
-        page: currentPage,
-        perPage: rowsPerPage,
-        status: e.target.value,
-      })
-    );
-  };
-
-  const handlePagination = (page) => {
-    dispatch(
-      getData({
-        sort,
-        q: value,
-        sortColumn,
-        status: statusValue,
-        perPage: rowsPerPage,
-        page: page.selected + 1,
-      })
-    );
-    setCurrentPage(page.selected + 1);
-  };
-
-  const CustomPagination = () => {
-    const count = Number((store.total / rowsPerPage).toFixed(0));
-
+  if (row.user.photo) {
     return (
-      <ReactPaginate
-        nextLabel=""
-        breakLabel="..."
-        previousLabel=""
-        pageCount={count || 1}
-        activeClassName="active"
-        breakClassName="page-item"
-        pageClassName={"page-item"}
-        breakLinkClassName="page-link"
-        nextLinkClassName={"page-link"}
-        pageLinkClassName={"page-link"}
-        nextClassName={"page-item next"}
-        previousLinkClassName={"page-link"}
-        previousClassName={"page-item prev"}
-        onPageChange={(page) => handlePagination(page)}
-        forcePage={currentPage !== 0 ? currentPage - 1 : 0}
-        containerClassName={"pagination react-paginate justify-content-end p-1"}
+      <Avatar className="me-50" img={row.user.photo} width="32" height="32" />
+    );
+  } else {
+    return (
+      <Avatar
+        color={color}
+        className="me-50"
+        content={`${row.user.firstname} ${row.user.lastname}`}
+        initials
       />
     );
-  };
+  }
+};
 
-  const dataToRender = () => {
-    const filters = {
-      q: value,
-      status: statusValue,
-    };
+const OrdersPage = () => {
+  const dispatch = useDispatch();
+  const { orders } = useSelector((state) => state);
 
-    const isFiltered = Object.keys(filters).some(function (k) {
-      return filters[k].length > 0;
-    });
+  const [currentPage, setCurrentPage] = useState(0);
+  const [searchValue, setSearchValue] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
 
-    if (store.data.length > 0) {
-      return store.data;
-    } else if (store.data.length === 0 && isFiltered) {
-      return [];
-    } else {
-      return store.allData.slice(0, rowsPerPage);
+  const { fetchOrders, isLoading } = useOrders((success) => {
+    dispatch(setOrders(success));
+  });
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const handleFilter = (e) => {
+    const value = e.target.value;
+    let updatedData = [];
+    setSearchValue(value);
+
+    if (value.length) {
+      updatedData = orders.filter((item) => {
+        const startsWith =
+          item.orderNo.toLowerCase().startsWith(value.toLowerCase()) ||
+          item.status.toUpperCase().startsWith(value.toLowerCase()) ||
+          item.user.firstname.toLowerCase().startsWith(value.toLowerCase()) ||
+          item.user.lastname.toLowerCase().startsWith(value.toLowerCase()) ||
+          item.user.email.toLowerCase().startsWith(value.toLowerCase());
+
+        const includes =
+          item.orderNo.toLowerCase().includes(value.toLowerCase()) ||
+          item.status.toLowerCase().includes(value.toLowerCase()) ||
+          item.user.firstname.toLowerCase().includes(value.toLowerCase()) ||
+          item.user.lastname.toLowerCase().includes(value.toLowerCase()) ||
+          item.user.email.toLowerCase().includes(value.toLowerCase());
+
+        if (startsWith) {
+          return startsWith;
+        } else if (!startsWith && includes) {
+          return includes;
+        } else return null;
+      });
+      setFilteredData(updatedData);
+      setSearchValue(value);
     }
   };
-  // ** User filter options
-  const roleOptions = [
-    { value: "", label: "Select Role" },
-    { value: "admin", label: "Admin" },
-    { value: "author", label: "Author" },
-    { value: "editor", label: "Editor" },
-    { value: "maintainer", label: "Maintainer" },
-    { value: "subscriber", label: "Subscriber" },
-  ];
 
-  const planOptions = [
-    { value: "", label: "Select Plan" },
-    { value: "basic", label: "Basic" },
-    { value: "company", label: "Company" },
-    { value: "enterprise", label: "Enterprise" },
-    { value: "team", label: "Team" },
-  ];
-
-  const statusOptions = [
-    { value: "", label: "Select Status", number: 0 },
-    { value: "pending", label: "Pending", number: 1 },
-    { value: "active", label: "Active", number: 2 },
-    { value: "inactive", label: "Inactive", number: 3 },
-  ];
-
-  const handleSort = (column, sortDirection) => {
-    setSort(sortDirection);
-    setSortColumn(column.sortField);
-    dispatch(
-      getData({
-        q: value,
-        page: currentPage,
-        sort: sortDirection,
-        status: statusValue,
-        perPage: rowsPerPage,
-        sortColumn: column.sortField,
-      })
-    );
+  // ** Function to handle Pagination
+  const handlePagination = (page) => {
+    setCurrentPage(page.selected);
   };
 
+  const CustomPagination = () => (
+    <ReactPaginate
+      previousLabel=""
+      nextLabel=""
+      forcePage={currentPage}
+      onPageChange={(page) => handlePagination(page)}
+      pageCount={
+        searchValue.length
+          ? Math.ceil(filteredData.length / 7)
+          : Math.ceil(orders.length / 7) || 1
+      }
+      breakLabel="..."
+      pageRangeDisplayed={2}
+      marginPagesDisplayed={2}
+      activeClassName="active"
+      pageClassName="page-item"
+      breakClassName="page-item"
+      nextLinkClassName="page-link"
+      pageLinkClassName="page-link"
+      breakLinkClassName="page-link"
+      previousLinkClassName="page-link"
+      nextClassName="page-item next-item"
+      previousClassName="page-item prev-item"
+      containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pe-1 mt-1"
+    />
+  );
+
+  const columns = useMemo(
+    () => [
+      {
+        name: "#OrderNo",
+        sortable: true,
+        sortField: "orderNo",
+        minWidth: "200px",
+        selector: (row) => row.orderNo,
+        cell: (row) => (
+          <Link to={`/dashboard/orders/${row._id}`}>{`#${row.orderNo}`}</Link>
+        ),
+      },
+      {
+        sortable: true,
+        minWidth: "102px",
+        sortField: "invoiceStatus",
+        name: <TrendingUp size={14} />,
+        selector: (row) => row.satus,
+        cell: (row) => {
+          const s = row.status;
+          const color =
+            s === "PENDING"
+              ? "warning"
+              : s === "PAID"
+              ? "primary"
+              : s === "PROCESSED"
+              ? "primary"
+              : s === "DECLINED" || s === "CANCELLED"
+              ? "danger"
+              : "primary";
+          const Icon =
+            s === "PENDING"
+              ? Loader
+              : s === "PAID"
+              ? Check
+              : s === "PROCESSED"
+              ? MoreHorizontal
+              : s === "DECLINED" || s === "CANCELLED"
+              ? XCircle
+              : CheckCircle;
+
+          return (
+            <Fragment>
+              <Avatar
+                color={color}
+                icon={<Icon size={14} />}
+                id={`av-tooltip-${row._id}`}
+              />
+              <UncontrolledTooltip
+                placement="top"
+                target={`av-tooltip-${row._id}`}
+              >
+                <span className="fw-bold">Status:</span> {row.status}
+                <br />
+                <span className="fw-bold">Order created:</span>{" "}
+                {moment(row.createdAt).format("DD MMM, YYYY")}
+              </UncontrolledTooltip>
+            </Fragment>
+          );
+        },
+      },
+      {
+        name: "User",
+        sortable: true,
+        minWidth: "300px",
+        sortField: "user",
+        selector: (row) => `${row.user.firstname} ${row.user.lastname}`,
+        cell: (row) => {
+          const name = `${row.user.firstname} ${row.user.lastname}`,
+            email = row.user.email;
+          return (
+            <div className="d-flex justify-content-left align-items-center">
+              {renderClient(row)}
+              <div className="d-flex flex-column">
+                <h6 className="user-name text-truncate mb-0">{name}</h6>
+                <small className="text-truncate text-muted mb-0">{email}</small>
+              </div>
+            </div>
+          );
+        },
+      },
+      {
+        name: "Items",
+        sortable: true,
+        minWidth: "150px",
+        sortField: "items",
+        selector: (row) => row.items.length,
+        cell: (row) => <span>{row.items.length || 0}</span>,
+      },
+      {
+        name: "Total Price",
+        sortable: true,
+        minWidth: "200px",
+        sortField: "total",
+        selector: (row) => {
+          const price = row.items
+            .map((item) => {
+              return item.price
+                ? parseInt(item.price) * parseInt(item.quantity)
+                : parseInt(item.estimatedPrice) * parseInt(item.quantity);
+            })
+            .reduce((a, b) => a + b, 0);
+          const delivery = row?.location?.subLocation.price;
+          const serviceFee = row.items
+            .map((item) => (item.fee ? item.fee : 0))
+            .reduce((a, b) => a + b, 0);
+          return formatMoney(price + delivery + serviceFee);
+        },
+        cell: (row) => {
+          const price = row.items
+            .map((item) => {
+              return item.price
+                ? parseInt(item.price) * parseInt(item.quantity)
+                : parseInt(item.estimatedPrice) * parseInt(item.quantity);
+            })
+            .reduce((a, b) => a + b, 0);
+          const delivery = row?.location?.subLocation.price;
+          const serviceFee = row.items
+            .map((item) => (item.fee ? item.fee : 0))
+            .reduce((a, b) => a + b, 0);
+          return <span>{formatMoney(price + delivery + serviceFee)}</span>;
+        },
+      },
+      {
+        sortable: true,
+        minWidth: "200px",
+        name: "Last Updated",
+        sortField: "lastUpdated",
+        cell: (row) => moment(row.updatedAt).format("DD MMM, YYYY"),
+        selector: (row) => moment(row.updatedAt).format("DD MMM, YYYY"),
+      },
+      {
+        name: "Action",
+        minWidth: "110px",
+        cell: (row) => (
+          <div className="column-action d-flex align-items-center">
+            <Link
+              to={`/dashboard/orders/${row._id}`}
+              id={`pw-tooltip-${row._id}`}
+            >
+              <Eye size={17} className="mx-1" />
+            </Link>
+            <UncontrolledTooltip
+              placement="top"
+              target={`pw-tooltip-${row._id}`}
+            >
+              Preview Order
+            </UncontrolledTooltip>
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
   return (
-    <div className="invoice-list-wrapper">
+    <div>
+      <Breadcrumbs
+        breadCrumbTitle="Orders"
+        breadCrumbParent="Order Mgnt"
+        breadCrumbActive="Orders"
+      />
+
       <Row>
         <Col lg="3" sm="6">
           <StatsHorizontal
             color="primary"
             statTitle="Total Orders"
-            icon={<User size={20} />}
-            renderStats={<h3 className="fw-bolder mb-75">21,459</h3>}
+            icon={<ShoppingCart size={20} />}
+            renderStats={<h3 className="fw-bolder mb-75">{orders.length}</h3>}
           />
         </Col>
         <Col lg="3" sm="6">
           <StatsHorizontal
             color="primary"
             statTitle="Completed Orders"
-            icon={<UserPlus size={20} />}
-            renderStats={<h3 className="fw-bolder mb-75">4,567</h3>}
+            icon={<ShoppingCart size={20} />}
+            renderStats={
+              <h3 className="fw-bolder mb-75">
+                {orders.filter((o) => o.status === "COMPLETED").length}
+              </h3>
+            }
           />
         </Col>
         <Col lg="3" sm="6">
           <StatsHorizontal
             color="warning"
             statTitle="Pending Orders"
-            icon={<UserCheck size={20} />}
-            renderStats={<h3 className="fw-bolder mb-75">19,860</h3>}
+            icon={<ShoppingCart size={20} />}
+            renderStats={
+              <h3 className="fw-bolder mb-75">
+                {orders.filter((o) => o.status === "PENDING").length}
+              </h3>
+            }
           />
         </Col>
         <Col lg="3" sm="6">
           <StatsHorizontal
             color="danger"
             statTitle="Declined Orders"
-            icon={<UserX size={20} />}
-            renderStats={<h3 className="fw-bolder mb-75">237</h3>}
+            icon={<ShoppingCart size={20} />}
+            renderStats={
+              <h3 className="fw-bolder mb-75">
+                {orders.filter((o) => o.status === "DECLINED").length}
+              </h3>
+            }
           />
         </Col>
       </Row>
 
-      <Card>
-        <CardHeader>
-          <CardTitle tag="h4">Filters</CardTitle>
+      <Card className="invoice-list-wrapper">
+        <CardHeader className="flex-md-row flex-column align-md-items-center align-items-start">
+          <CardTitle tag="h4">Orders</CardTitle>
         </CardHeader>
-        <CardBody>
-          <Row>
-            <Col md="4">
-              <Label for="role-select">Role</Label>
-              <Select
-                isClearable={false}
-                // value={currentRole}
-                options={roleOptions}
-                className="react-select"
-                classNamePrefix="select"
-                // theme={selectThemeColors}
-                onChange={(data) => {
-                  setCurrentRole(data);
-                  dispatch();
-                  // getData({
-                  //   sort,
-                  //   sortColumn,
-                  //   q: searchTerm,
-                  //   role: data.value,
-                  //   page: currentPage,
-                  //   perPage: rowsPerPage,
-                  //   status: currentStatus.value,
-                  //   currentPlan: currentPlan.value,
-                  // })
-                }}
-              />
-            </Col>
-            <Col className="my-md-0 my-1" md="4">
-              <Label for="plan-select">Plan</Label>
-              <Select
-                // theme={selectThemeColors}
-                isClearable={false}
-                className="react-select"
-                classNamePrefix="select"
-                options={planOptions}
-                // value={currentPlan}
-                onChange={(data) => {
-                  setCurrentPlan(data);
-                  // dispatch(
-                  //   getData({
-                  //     sort,
-                  //     sortColumn,
-                  //     q: searchTerm,
-                  //     page: currentPage,
-                  //     perPage: rowsPerPage,
-                  //     role: currentRole.value,
-                  //     currentPlan: data.value,
-                  //     status: currentStatus.value,
-                  //   })
-                  // );
-                }}
-              />
-            </Col>
-            <Col md="4">
-              <Label for="status-select">Status</Label>
-              <Select
-                // theme={selectThemeColors}
-                isClearable={false}
-                className="react-select"
-                classNamePrefix="select"
-                options={statusOptions}
-                // value={currentStatus}
-                onChange={(data) => {
-                  setCurrentStatus(data);
-                  // dispatch(
-                  //   getData({
-                  //     sort,
-                  //     sortColumn,
-                  //     q: searchTerm,
-                  //     page: currentPage,
-                  //     status: data.value,
-                  //     perPage: rowsPerPage,
-                  //     role: currentRole.value,
-                  //     currentPlan: currentPlan.value,
-                  //   })
-                  // );
-                }}
-              />
-            </Col>
-          </Row>
-        </CardBody>
-      </Card>
+        <Row className="justify-content-end mx-0">
+          <Col
+            className="d-flex align-items-center justify-content-end mt-1"
+            md="6"
+            sm="12"
+          >
+            <Label className="me-1" for="search-input">
+              Search
+            </Label>
+            <Input
+              className="dataTable-filter mb-50"
+              type="text"
+              bsSize="sm"
+              id="search-input"
+              value={searchValue}
+              onChange={handleFilter}
+            />
+          </Col>
+        </Row>
+        <Card>
+          <div className="invoice-list-dataTable react-dataTable">
+            {isLoading ? (
+              <div className="text-center">
+                <Spinner color="primary" />
+              </div>
+            ) : null}
 
-      <Card>
-        <div className="invoice-list-dataTable react-dataTable">
-          <DataTable
-            noHeader
-            pagination
-            sortServer
-            paginationServer
-            subHeader={true}
-            columns={columns}
-            responsive={true}
-            onSort={handleSort}
-            data={dataToRender()}
-            sortIcon={<ChevronDown />}
-            className="react-dataTable"
-            defaultSortField="invoiceId"
-            paginationDefaultPage={currentPage}
-            paginationComponent={CustomPagination}
-            subHeaderComponent={
-              <CustomHeader
-                value={value}
-                statusValue={statusValue}
-                rowsPerPage={rowsPerPage}
-                handleFilter={handleFilter}
-                handlePerPage={handlePerPage}
-                handleStatusValue={handleStatusValue}
-              />
-            }
-          />
-        </div>
+            <DataTable
+              noHeader
+              pagination
+              columns={columns}
+              paginationPerPage={7}
+              className="react-dataTable"
+              sortIcon={<ChevronDown size={10} />}
+              paginationDefaultPage={currentPage + 1}
+              paginationComponent={CustomPagination}
+              data={searchValue.length ? filteredData : orders}
+            />
+          </div>
+        </Card>
       </Card>
     </div>
   );
 };
 
-export default InvoiceList;
+export default OrdersPage;

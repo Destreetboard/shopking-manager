@@ -26,10 +26,10 @@ export default [
         navLink: "/dashboard/orders/completed",
       },
       {
-        id: "declined-orders",
-        title: "Declined Orders",
+        id: "cancelled-orders",
+        title: "Cancelled Orders",
         icon: <Circle />,
-        navLink: "/dashboard/orders/declined",
+        navLink: "/dashboard/orders/cancelled",
       },
     ],
   },

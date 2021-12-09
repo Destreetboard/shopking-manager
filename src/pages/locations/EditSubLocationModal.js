@@ -16,7 +16,7 @@ import { setLocations } from "@store/locations";
 // ** Styles
 import "@styles/react/libs/flatpickr/flatpickr.scss";
 
-const EditLocationModal = ({ open, handleModal, ssubLocation }) => {
+const EditLocationModal = ({ open, handleModal, subLocation }) => {
   const dispatch = useDispatch();
 
   const [name, setName] = useState(subLocation.name);

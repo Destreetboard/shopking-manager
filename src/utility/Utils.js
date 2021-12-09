@@ -1,4 +1,6 @@
 import jwtDecode from "jwt-decode";
+import "intl";
+import "intl/locale-data/jsonp/en";
 
 // ** Checks if an object is empty (returns boolean)
 export const isObjEmpty = (obj) => Object.keys(obj).length === 0;
@@ -93,4 +95,16 @@ export const validateEmail = (email) => {
   const re =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
+};
+
+export const formatMoney = (amount) => {
+  const formatType = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "NGN",
+    maximumSignificantDigits: 12,
+  });
+
+  const currency = formatType.format(parseInt(amount));
+
+  return currency.replace("NGN", "\u20A6");
 };

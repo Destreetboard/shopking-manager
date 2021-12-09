@@ -14,14 +14,17 @@ const UsersRotues = [
   {
     path: "/dashboard/orders/completed",
     component: lazy(() => import("../../pages/orders/completed")),
+    exact: true,
   },
   {
-    path: "/dashboard/orders/declined",
-    component: lazy(() => import("../../pages/orders/declined")),
+    path: "/dashboard/orders/cancelled",
+    component: lazy(() => import("../../pages/orders/cancelled")),
+    exact: true,
   },
   {
     path: "/dashboard/orders/:id",
     component: lazy(() => import("../../pages/orders/detail")),
+    exact: true,
   },
 ];
 

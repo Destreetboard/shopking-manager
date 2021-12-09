@@ -4,6 +4,7 @@ import layout from "./layout";
 import auth from "./authentication";
 import categories from "./categories";
 import locations from "./locations";
+import orders from "./orders";
 
 import todo from "@src/views/apps/todo/store";
 import chat from "@src/views/apps/chat/store";
@@ -19,6 +20,7 @@ const rootReducer = {
   auth,
   categories,
   locations,
+  orders,
   todo,
   chat,
   email,

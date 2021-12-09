@@ -12,8 +12,9 @@ export const useSubLocations = (success, error) => {
   const createSubLocation = async (id, data) => {
     setIsCreatingSubLocation(true);
     try {
-      const res = await apiService.post(`/locations/${id}/sub-locations`, data);
+      await apiService.post(`/locations/${id}/sub-locations`, data);
       setIsCreatingSubLocation(false);
+      return success && success();
     } catch (e) {
       console.log(e);
       setIsCreatingSubLocation(false);
@@ -26,6 +27,7 @@ export const useSubLocations = (success, error) => {
     try {
       const res = await apiService.patch(`/locations/${id}/update`, data);
       setIsUpdatingSubLocation(false);
+      return success && success();
     } catch (e) {
       console.log(e);
       setIsUpdatingSubLocation(false);
@@ -38,6 +40,7 @@ export const useSubLocations = (success, error) => {
     try {
       const res = await apiService.delete(`/locations/${id}/delete`);
       setIsDeletingSubLocation(false);
+      return success && success();
     } catch (e) {
       console.log(e);
       setIsDeletingSubLocation(false);
