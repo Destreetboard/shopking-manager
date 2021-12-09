@@ -1,10 +1,5 @@
-// ** React Imports
 import { useState } from "react";
-
-// ** Third Party Components
-import { User, X } from "react-feather";
-
-// ** Reactstrap Imports
+import { X } from "react-feather";
 import {
   Modal,
   Input,
@@ -12,16 +7,40 @@ import {
   Button,
   ModalHeader,
   ModalBody,
-  InputGroup,
-  InputGroupText,
+  Spinner,
 } from "reactstrap";
+import { useLocations } from "../../hooks";
+import { useDispatch } from "react-redux";
+import { setLocations } from "@store/locations";
 
 // ** Styles
 import "@styles/react/libs/flatpickr/flatpickr.scss";
 
 const EditLocationModal = ({ open, handleModal, location }) => {
+  const dispatch = useDispatch();
+
   const [name, setName] = useState(location.name);
-  // ** Custom close btn
+  const [error, setError] = useState("");
+
+  const { updateLocation, isUpdatingLocation } = useLocations(
+    (success) => {
+      dispatch(setLocations(success));
+      return handleModal && handleModal();
+    },
+    (err) => {
+      setError(err.message);
+    }
+  );
+
+  const handleUpdateLocation = () => {
+    setError("");
+    if (!name || name.length < 3) {
+      setError("Location name must be more that 3 characters.");
+      return;
+    }
+    updateLocation(location._id, { name });
+  };
+
   const CloseBtn = (
     <X className="cursor-pointer" size={15} onClick={handleModal} />
   );
@@ -51,14 +70,26 @@ const EditLocationModal = ({ open, handleModal, location }) => {
             name="name"
             value={name}
             onChange={(input) => setName(input.target.value)}
+            className={error ? "border-danger text-danger" : ""}
             id="name"
             placeholder="Format: State - Area. E.g: Enugu - Agbani."
           />
+          <span className="text-danger small">{error}</span>
         </div>
-        <Button className="me-1" color="primary" onClick={handleModal}>
-          Update
+        <Button
+          disabled={isUpdatingLocation}
+          onClick={handleUpdateLocation}
+          className="me-1"
+          color="primary"
+        >
+          {isUpdatingLocation ? <Spinner /> : "Update"}
         </Button>
-        <Button color="secondary" onClick={handleModal} outline>
+        <Button
+          disabled={isUpdatingLocation}
+          color="secondary"
+          onClick={handleModal}
+          outline
+        >
           Cancel
         </Button>
       </ModalBody>

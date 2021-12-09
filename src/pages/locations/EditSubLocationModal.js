@@ -1,6 +1,5 @@
-// ** React Imports
 import { useState } from "react";
-import { User, X } from "react-feather";
+import { X } from "react-feather";
 import {
   Modal,
   Input,
@@ -10,20 +9,22 @@ import {
   ModalBody,
   Spinner,
 } from "reactstrap";
-import "@styles/react/libs/flatpickr/flatpickr.scss";
-import { useCategories } from "../../hooks";
+import { useLocations } from "../../hooks";
 import { useDispatch } from "react-redux";
-import { setCategories } from "@store/categories";
+import { setLocations } from "@store/locations";
 
-const EditLocationModal = ({ open, handleModal, category }) => {
+// ** Styles
+import "@styles/react/libs/flatpickr/flatpickr.scss";
+
+const EditLocationModal = ({ open, handleModal, ssubLocation }) => {
   const dispatch = useDispatch();
 
-  const [name, setName] = useState(category.name);
+  const [name, setName] = useState(subLocation.name);
   const [error, setError] = useState("");
 
-  const { updateCategory, isUpdatingCategory } = useCategories(
+  const { updateLocation, isUpdatingLocation } = useLocations(
     (success) => {
-      dispatch(setCategories(success));
+      dispatch(setLocations(success));
       return handleModal && handleModal();
     },
     (err) => {
@@ -31,16 +32,15 @@ const EditLocationModal = ({ open, handleModal, category }) => {
     }
   );
 
-  const handleUpdateCategory = () => {
+  const handleUpdateLocation = () => {
     setError("");
     if (!name || name.length < 3) {
-      setError("Category name must be more that 3 characters.");
+      setError("Location name must be more that 3 characters.");
       return;
     }
-    updateCategory(category._id, { name });
+    updateLocation(location._id, { name });
   };
 
-  // ** Custom close btn
   const CloseBtn = (
     <X className="cursor-pointer" size={15} onClick={handleModal} />
   );
@@ -67,25 +67,25 @@ const EditLocationModal = ({ open, handleModal, category }) => {
             Name
           </Label>
           <Input
-            onChange={(input) => setName(input.target.value)}
             name="name"
             value={name}
+            onChange={(input) => setName(input.target.value)}
             className={error ? "border-danger text-danger" : ""}
             id="name"
-            placeholder="Gloceries"
+            placeholder="Format: State - Area. E.g: Enugu - Agbani."
           />
           <span className="text-danger small">{error}</span>
         </div>
         <Button
+          disabled={isUpdatingLocation}
+          onClick={handleUpdateLocation}
           className="me-1"
           color="primary"
-          disabled={isUpdatingCategory}
-          onClick={handleUpdateCategory}
         >
-          {isUpdatingCategory ? <Spinner /> : "Update"}
+          {isUpdatingLocation ? <Spinner /> : "Update"}
         </Button>
         <Button
-          disabled={isUpdatingCategory}
+          disabled={isUpdatingLocation}
           color="secondary"
           onClick={handleModal}
           outline

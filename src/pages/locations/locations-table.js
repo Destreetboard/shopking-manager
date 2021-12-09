@@ -1,20 +1,6 @@
-// ** React Imports
 import { Fragment, useState, useEffect, useMemo } from "react";
+import { Edit, Trash2, ChevronDown, Eye } from "react-feather";
 import {
-  MoreVertical,
-  Edit,
-  FileText,
-  Trash2,
-  ChevronDown,
-} from "react-feather";
-import { Link } from "react-router-dom";
-
-// ** Reactstrap Imports
-import {
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
   Row,
   Col,
   Card,
@@ -22,32 +8,50 @@ import {
   Label,
   CardTitle,
   CardHeader,
+  Spinner,
+  Alert,
 } from "reactstrap";
-
-// ** Add New Modal Component
 import EditLocationModal from "./EditLocationModal";
-
-// ** Third Party Components
 import ReactPaginate from "react-paginate";
 import DataTable from "react-data-table-component";
-
 import { useLocations } from "../../hooks";
+import { useSelector, useDispatch } from "react-redux";
+import { setLocations } from "@store/locations";
+import { Link } from "react-router-dom";
 
 const LocationDTable = () => {
-  // ** States
+  const { locations: data } = useSelector((state) => state);
+  const dispatch = useDispatch();
+
   const [currentPage, setCurrentPage] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [location, setLocation] = useState(null);
-  const [data, setData] = useState([]);
+  const [error, setError] = useState("");
 
-  const { fetchLocations, isLoading } = useLocations((success) => {
-    setData(success);
-  });
+  const {
+    fetchLocations,
+    deleteLocation,
+    isFetchingLocations,
+    isDeletingLocation,
+  } = useLocations(
+    (success) => {
+      dispatch(setLocations(success));
+    },
+    (err) => {
+      setError(err.message);
+    }
+  );
 
   useEffect(() => {
     fetchLocations();
   }, []);
+
+  const handleDeleteLocation = (id) => {
+    if (confirm("Are you sure you want to delete this location?")) {
+      deleteLocation(id);
+    }
+  };
 
   const columns = useMemo(
     () => [
@@ -67,21 +71,9 @@ const LocationDTable = () => {
         cell: (row) => {
           return (
             <div className="d-flex">
-              <UncontrolledDropdown>
-                <DropdownToggle className="pe-1" tag="span">
-                  <MoreVertical size={15} />
-                </DropdownToggle>
-                <DropdownMenu end>
-                  <DropdownItem
-                    tag="a"
-                    href={`#/dashboard/locations/${row._id}/sub-locations`}
-                    className="w-100"
-                  >
-                    <FileText size={15} />
-                    <span className="align-middle ms-50">Details</span>
-                  </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledDropdown>
+              <Link to={`/dashboard/locations/${row._id}/sub-locations`}>
+                <Eye className="mx-1" size={15} />
+              </Link>
               <Edit
                 size={15}
                 onClick={(e) => {
@@ -91,7 +83,7 @@ const LocationDTable = () => {
               <Trash2
                 className="text-danger mx-1"
                 size={15}
-                onClick={(e) => alert("hello")}
+                onClick={() => handleDeleteLocation(row._id)}
               />
             </div>
           );
@@ -165,6 +157,19 @@ const LocationDTable = () => {
         <CardHeader className="flex-md-row flex-column align-md-items-center align-items-start">
           <CardTitle tag="h4">Locations</CardTitle>
         </CardHeader>
+        {error ? (
+          <Alert className="text-center" color="danger">
+            {error}
+            {setTimeout(() => {
+              setError("");
+            }, 5000)}
+          </Alert>
+        ) : null}
+        {isFetchingLocations || isDeletingLocation ? (
+          <div className="text-center">
+            <Spinner color="primary" />
+          </div>
+        ) : null}
         <Row className="justify-content-end mx-0">
           <Col
             className="d-flex align-items-center justify-content-end mt-1"

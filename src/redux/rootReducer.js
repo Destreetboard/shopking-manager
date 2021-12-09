@@ -3,6 +3,7 @@ import navbar from "./navbar";
 import layout from "./layout";
 import auth from "./authentication";
 import categories from "./categories";
+import locations from "./locations";
 
 import todo from "@src/views/apps/todo/store";
 import chat from "@src/views/apps/chat/store";
@@ -17,6 +18,7 @@ import permissions from "@src/views/apps/roles-permissions/store";
 const rootReducer = {
   auth,
   categories,
+  locations,
   todo,
   chat,
   email,

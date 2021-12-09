@@ -4,6 +4,7 @@ export * from "./useLogin";
 // export * from "./useOrder";
 // export * from "./useOrders";
 export * from "./useLocations";
+export * from "./useSubLocations";
 export * from "./useCategories";
 // export * from "./useOrderDetails";
 export * from "./useUser";

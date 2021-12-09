@@ -26,6 +26,7 @@ const Categories = () => {
 
   const [name, setName] = React.useState("");
   const [error, setError] = React.useState("");
+
   const { createCategory, isLoadingCategories } = useCategories(
     (success) => {
       setName("");
@@ -58,7 +59,12 @@ const Categories = () => {
         </CardHeader>
 
         <CardBody>
-          <Form>
+          <Form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleCreateCategory();
+            }}
+          >
             <Row>
               <Col md="8" sm="12" className="mb-1">
                 <Label className="form-label" for="nameMulti">

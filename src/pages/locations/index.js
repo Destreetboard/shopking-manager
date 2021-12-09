@@ -1,8 +1,5 @@
-// ** React Imports
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import LocationsTable from "./locations-table";
-
-// ** Custom Components
 import Breadcrumbs from "@components/breadcrumbs";
 import {
   Card,
@@ -15,10 +12,37 @@ import {
   Form,
   Button,
   Label,
+  Spinner,
 } from "reactstrap";
-import Select from "react-select";
+import { useLocations } from "../../hooks";
+import { setLocations } from "@store/locations";
+import { useDispatch } from "react-redux";
 
 const Locations = () => {
+  const dispatch = useDispatch();
+
+  const [name, setName] = React.useState("");
+  const [error, setError] = React.useState("");
+
+  const { createLocation, isCreatingLocation } = useLocations(
+    (success) => {
+      dispatch(setLocations(success));
+      setName("");
+    },
+    (err) => {
+      setError(err.message);
+    }
+  );
+
+  const handleCreateLocation = () => {
+    setError("");
+    if (!name || name.length < 3) {
+      setError("Location name must be more that 3 characters.");
+      return;
+    }
+    createLocation({ name });
+  };
+
   return (
     <Fragment>
       <Breadcrumbs
@@ -32,7 +56,12 @@ const Locations = () => {
         </CardHeader>
 
         <CardBody>
-          <Form>
+          <Form
+            onSubmit={(e) => {
+              e.preventDefeault();
+              handleCreateLocation();
+            }}
+          >
             <Row>
               <Col md="8" sm="12" className="mb-1">
                 <Label className="form-label" for="nameMulti">
@@ -41,21 +70,30 @@ const Locations = () => {
                 <Input
                   type="text"
                   name="name"
+                  className={error ? "border-danger text-danger" : ""}
+                  value={name}
+                  onChange={(input) => setName(input.target.value)}
                   id="location-name"
                   placeholder="Format: State - Area. e.g: Enugu - Agbani."
                 />
+                <span className="text-danger small">{error}</span>
               </Col>
               <Col sm="12">
                 <div className="d-flex">
                   <Button
                     className="me-1"
                     color="primary"
-                    type="submit"
-                    onClick={(e) => e.preventDefault()}
+                    onClick={handleCreateLocation}
+                    disabled={isCreatingLocation}
                   >
-                    Create
+                    {isCreatingLocation ? <Spinner /> : "Create"}
                   </Button>
-                  <Button outline color="secondary" type="reset">
+                  <Button
+                    disabled={isCreatingLocation}
+                    outline
+                    color="secondary"
+                    type="reset"
+                  >
                     Clear
                   </Button>
                 </div>

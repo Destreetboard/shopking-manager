@@ -11,10 +11,12 @@ import {
   Label,
   CardTitle,
   CardHeader,
+  Alert,
+  Spinner,
 } from "reactstrap";
 
 // ** Add New Modal Component
-import EditSubLocationModal from "../sublocations/EditSubLocationModal";
+import EditSubLocationModal from "../EditSubLocationModal";
 
 // ** Third Party Components
 import ReactPaginate from "react-paginate";
@@ -22,31 +24,36 @@ import DataTable from "react-data-table-component";
 
 import { useLocations } from "../../../hooks";
 
-const SubLocationTable = () => {
+const SubLocationTable = ({
+  locationId,
+  pushLocation,
+  isSubLocationCreated,
+}) => {
   // ** States
   const [currentPage, setCurrentPage] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [locations, setLocations] = useState([]);
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState({});
+  const [subLocation, setSubLocation] = useState(null);
+  const [error, setError] = useState("");
   const [data, setData] = useState([]);
 
-  const { fetchLocations, isLoading } = useLocations((success) => {
-    setData(success);
-    setLocations(success);
-  });
+  const { fetchLocation, isFetchingLocation, isUpdatingLocation } =
+    useLocations((success) => {
+      setData(success.subLocations);
+      console.log(success.subLocations);
+      setLocation(success);
+      pushLocation(success);
+    });
 
   useEffect(() => {
-    fetchLocations();
-  }, []);
+    if (locationId) {
+      fetchLocation(locationId);
+    }
+  }, [isSubLocationCreated]);
 
   const columns = useMemo(
     () => [
-      {
-        name: "Location",
-        sortable: (row) => locations.find((l) => row._id === l._id),
-        selector: (row) => locations.find((l) => row._id === l._id),
-      },
       {
         name: "Address",
         sortable: (row) => row.address,
@@ -144,8 +151,21 @@ const SubLocationTable = () => {
     <Fragment>
       <Card>
         <CardHeader className="flex-md-row flex-column align-md-items-center align-items-start">
-          <CardTitle tag="h4">Locations</CardTitle>
+          <CardTitle tag="h4">{location?.name}'s Sub Locations</CardTitle>
         </CardHeader>
+        {error ? (
+          <Alert className="text-center" color="danger">
+            {error}
+            {setTimeout(() => {
+              setError("");
+            }, 5000)}
+          </Alert>
+        ) : null}
+        {isFetchingLocation || isUpdatingLocation ? (
+          <div className="text-center">
+            <Spinner color="primary" />
+          </div>
+        ) : null}
         <Row className="justify-content-end mx-0">
           <Col
             className="d-flex align-items-center justify-content-end mt-1"
@@ -179,12 +199,11 @@ const SubLocationTable = () => {
           />
         </div>
       </Card>
-      {location && (
+      {subLocation && (
         <EditSubLocationModal
-          location={location}
-          locations={data}
-          open={location !== null}
-          handleModal={() => setLocation(null)}
+          subLocation={subLocation}
+          open={subLocation !== null}
+          handleModal={() => setSubLocation(null)}
         />
       )}
     </Fragment>
