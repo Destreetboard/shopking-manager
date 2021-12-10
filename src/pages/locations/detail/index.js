@@ -51,9 +51,13 @@ const LocationSubLocations = ({ match }) => {
       setPrice("");
     },
     (err) => {
-      setError(err.message);
+      setError(err?.message);
     }
   );
+
+  const onLocationChange = () => {
+    fetchLocation(match.params.id);
+  };
 
   const handleCreateSubLocation = () => {
     setError("");
@@ -152,6 +156,7 @@ const LocationSubLocations = ({ match }) => {
         isFetchingLocation={isFetchingLocation}
         subLocations={subLocations}
         location={location}
+        onLocationChange={onLocationChange}
       />
     </Fragment>
   );

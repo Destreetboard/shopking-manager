@@ -13,7 +13,7 @@ export const useLogin = (success, error) => {
     } catch (e) {
       console.log(e);
       setIsLoading(false);
-      return error ? error(e.response.data) : null;
+      return error ? error(e?.response?.data) : null;
     }
   };
 

@@ -39,7 +39,7 @@ const LocationDTable = () => {
       dispatch(setLocations(success));
     },
     (err) => {
-      setError(err.message);
+      setError(err?.message);
     }
   );
 

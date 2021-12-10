@@ -46,7 +46,7 @@ const CategoriesTable = () => {
       dispatch(setCategories(success));
     },
     (err) => {
-      setError(err.message);
+      setError(err?.message);
     }
   );
 

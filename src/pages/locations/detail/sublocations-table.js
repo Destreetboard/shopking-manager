@@ -20,6 +20,7 @@ const SubLocationTable = ({
   location,
   subLocations: data,
   isFetchingLocation,
+  onLocationChange,
 }) => {
   // ** States
   const [currentPage, setCurrentPage] = useState(0);
@@ -27,6 +28,21 @@ const SubLocationTable = ({
   const [filteredData, setFilteredData] = useState([]);
   const [subLocation, setSubLocation] = useState(null);
   const [error, setError] = useState("");
+
+  const { deleteSubLocation, isDeletingSubLocation } = useSubLocations(
+    () => {
+      onLocationChange();
+    },
+    (err) => {
+      setError(err?.message);
+    }
+  );
+
+  const handleDeleteSubLocation = (id) => {
+    if (confirm("Are you sure you want to delete this sub-location?")) {
+      deleteSubLocation(location._id, id);
+    }
+  };
 
   const columns = useMemo(
     () => [
@@ -55,7 +71,7 @@ const SubLocationTable = ({
               <Trash2
                 className="text-danger mx-1"
                 size={15}
-                onClick={(e) => alert("hello")}
+                onClick={(e) => handleDeleteSubLocation(row._id)}
               />
             </div>
           );
@@ -137,7 +153,7 @@ const SubLocationTable = ({
             }, 5000)}
           </Alert>
         ) : null}
-        {isFetchingLocation ? (
+        {isFetchingLocation || isDeletingSubLocation ? (
           <div className="text-center">
             <Spinner color="primary" />
           </div>
@@ -178,8 +194,12 @@ const SubLocationTable = ({
       {subLocation && (
         <EditSubLocationModal
           subLocation={subLocation}
+          location={location}
           open={subLocation !== null}
-          handleModal={() => setSubLocation(null)}
+          handleModal={() => {
+            setSubLocation(null);
+            onLocationChange();
+          }}
         />
       )}
     </Fragment>

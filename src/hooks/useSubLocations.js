@@ -18,27 +18,32 @@ export const useSubLocations = (success, error) => {
     } catch (e) {
       console.log(e);
       setIsCreatingSubLocation(false);
-      return error && error(e.response.data);
+      return error && error(e?.response?.data);
     }
   };
 
   const updateSubLocation = async ({ locationId, subLocationId }, data) => {
     setIsUpdatingSubLocation(true);
     try {
-      const res = await apiService.patch(`/locations/${id}/update`, data);
+      const res = await apiService.patch(
+        `/locations/${locationId}/sub-locations/${subLocationId}`,
+        { subLocation: data }
+      );
       setIsUpdatingSubLocation(false);
       return success && success();
     } catch (e) {
       console.log(e);
       setIsUpdatingSubLocation(false);
-      return error && error(e.response.data);
+      return error && error(e?.response?.data);
     }
   };
 
-  const deleteSubLocation = async (id) => {
+  const deleteSubLocation = async (locationId, subLocationId) => {
     setIsDeletingSubLocation(true);
     try {
-      const res = await apiService.delete(`/locations/${id}/delete`);
+      const res = await apiService.delete(
+        `/locations/${locationId}/sub-locations/${subLocationId}`
+      );
       setIsDeletingSubLocation(false);
       return success && success();
     } catch (e) {

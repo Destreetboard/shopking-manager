@@ -30,7 +30,7 @@ const Locations = () => {
       setName("");
     },
     (err) => {
-      setError(err.message);
+      setError(err?.message);
     }
   );
 

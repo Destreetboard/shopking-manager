@@ -9,36 +9,37 @@ import {
   ModalBody,
   Spinner,
 } from "reactstrap";
-import { useLocations } from "../../hooks";
-import { useDispatch } from "react-redux";
-import { setLocations } from "@store/locations";
-
-// ** Styles
+import { useSubLocations } from "../../hooks";
 import "@styles/react/libs/flatpickr/flatpickr.scss";
 
-const EditLocationModal = ({ open, handleModal, subLocation }) => {
-  const dispatch = useDispatch();
-
-  const [name, setName] = useState(subLocation.name);
+const EditLocationModal = ({ open, handleModal, subLocation, location }) => {
+  const [address, setAddress] = useState(subLocation.address);
+  const [price, setPrice] = useState(subLocation.price);
   const [error, setError] = useState("");
 
-  const { updateLocation, isUpdatingLocation } = useLocations(
-    (success) => {
-      dispatch(setLocations(success));
+  const { updateSubLocation, isUpdatingSubLocation } = useSubLocations(
+    () => {
       return handleModal && handleModal();
     },
     (err) => {
-      setError(err.message);
+      setError(err?.message);
     }
   );
 
-  const handleUpdateLocation = () => {
+  const handleUpdateSubLocation = () => {
     setError("");
-    if (!name || name.length < 3) {
-      setError("Location name must be more that 3 characters.");
+    if (!address || address.length < 3) {
+      setError("Sub Location address must be more that 3 characters.");
       return;
     }
-    updateLocation(location._id, { name });
+    if (!price || parseInt(price) <= 0) {
+      setError("Sub Location price is required  and must greater than 0.");
+      return;
+    }
+    updateSubLocation(
+      { locationId: location._id, subLocationId: subLocation._id },
+      { address, price }
+    );
   };
 
   const CloseBtn = (
@@ -64,28 +65,42 @@ const EditLocationModal = ({ open, handleModal, subLocation }) => {
       <ModalBody className="flex-grow-1">
         <div className="mb-1">
           <Label className="form-label" for="full-name">
-            Name
+            Address
           </Label>
           <Input
-            name="name"
-            value={name}
-            onChange={(input) => setName(input.target.value)}
+            name="address"
+            value={address}
+            onChange={(input) => setAddress(input.target.value)}
             className={error ? "border-danger text-danger" : ""}
-            id="name"
-            placeholder="Format: State - Area. E.g: Enugu - Agbani."
+            id="address"
+            placeholder="Format: Address. E.g: Divine Favour Lodge."
           />
-          <span className="text-danger small">{error}</span>
         </div>
+        <div className="mb-1">
+          <Label className="form-label" for="full-name">
+            Price
+          </Label>
+          <Input
+            name="price"
+            type="number"
+            value={price}
+            onChange={(input) => setPrice(input.target.value)}
+            className={error ? "border-danger text-danger" : ""}
+            id="price"
+            placeholder="E.g: 1000."
+          />
+        </div>
+        <span className="text-danger small">{error}</span>
         <Button
-          disabled={isUpdatingLocation}
-          onClick={handleUpdateLocation}
+          disabled={isUpdatingSubLocation}
+          onClick={handleUpdateSubLocation}
           className="me-1"
           color="primary"
         >
-          {isUpdatingLocation ? <Spinner /> : "Update"}
+          {isUpdatingSubLocation ? <Spinner /> : "Update"}
         </Button>
         <Button
-          disabled={isUpdatingLocation}
+          disabled={isUpdatingSubLocation}
           color="secondary"
           onClick={handleModal}
           outline

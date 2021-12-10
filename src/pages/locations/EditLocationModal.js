@@ -28,7 +28,7 @@ const EditLocationModal = ({ open, handleModal, location }) => {
       return handleModal && handleModal();
     },
     (err) => {
-      setError(err.message);
+      setError(err?.message);
     }
   );
 

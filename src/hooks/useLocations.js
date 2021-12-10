@@ -17,7 +17,7 @@ export const useLocations = (success, error) => {
     } catch (e) {
       console.log(e);
       setIsFetchingLocations(false);
-      return error && error(e.response.data);
+      return error && error(e?.response?.data);
     }
   };
 
@@ -30,7 +30,7 @@ export const useLocations = (success, error) => {
     } catch (e) {
       console.log(e);
       setIsFetchingLocation(false);
-      return error && error(e.response.data);
+      return error && error(e?.response?.data);
     }
   };
 
@@ -56,7 +56,7 @@ export const useLocations = (success, error) => {
     } catch (e) {
       console.log(e);
       setIsUpdatingLocation(false);
-      return error && error(e.response.data);
+      return error && error(e?.response?.data);
     }
   };
 
@@ -69,7 +69,7 @@ export const useLocations = (success, error) => {
     } catch (e) {
       console.log(e);
       setIsDeletingLocation(false);
-      return error && error(e.response.data);
+      return error && error(e?.response?.data);
     }
   };
 
