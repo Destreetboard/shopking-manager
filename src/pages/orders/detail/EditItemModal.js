@@ -33,23 +33,25 @@ const EditItemModal = ({
 }) => {
   const { categories } = useSelector((state) => state);
   const [name, setName] = useState(item.name);
-  const [images] = useState(item.images);
   const [category, setCategory] = useState({
     value: item.category._id,
     label: item.category.name,
   });
-  const [description, setDescription] = useState(item.description);
-  const [note, setNote] = useState(item.note);
-  const [price, setPrice] = useState(item.price);
-  const [fee, setFee] = useState(item.fee);
-  const [estimatedPrice, setEstimatedPrice] = useState(item.estimatedPrice);
+  const [description, setDescription] = useState(item.description || "");
+  const [note, setNote] = useState(item.note || "");
+  const [price, setPrice] = useState(item.price || "");
+  const [fee, setFee] = useState(item.fee || "");
+  const [quantity, setQuantity] = useState(item.quantity || "");
+  const [estimatedPrice, setEstimatedPrice] = useState(
+    item.estimatedPrice || ""
+  );
   const [error, setError] = useState("");
 
   const categoryOptions = useMemo(() => {
     return categories.map((cat) => ({ value: cat._id, label: cat.name }));
   }, []);
 
-  const { updateOrder, isLoading } = useOrder(
+  const { updateItem, isLoading } = useOrder(
     (success) => {
       onUpdateOrder(success);
       toast.success(<ToastContent message="Item Updated Successfully!" />, {
@@ -64,7 +66,7 @@ const EditItemModal = ({
     }
   );
 
-  const handleUpdateOrder = () => {
+  const handleUpdateItem = () => {
     setError("");
     if (!name || name.length < 3) {
       setError("Item name must be more that 3 characters.");
@@ -74,27 +76,19 @@ const EditItemModal = ({
       setError("Item price is required  and must greater than 0.");
       return;
     }
+    if (!quantity) {
+      setError("Item quantity is required.");
+      return;
+    }
     if (!fee) {
       setError("Item fee is required.");
       return;
     }
 
-    updateOrder(order._id, {
-      ...order,
-      items: [
-        ...items,
-        {
-          ...item,
-          fee,
-          price,
-          name,
-          // categoryId: category.value,
-          estimatedPrice,
-          description,
-          note,
-        },
-      ],
-    });
+    updateItem(
+      { orderId: order._id, itemId: item._id },
+      { note, quantity, fee, price }
+    );
   };
 
   const CloseBtn = (
@@ -191,6 +185,20 @@ const EditItemModal = ({
         </div>
         <div className="mb-1">
           <Label className="form-label" for="full-name">
+            Quantity
+          </Label>
+          <Input
+            name="quantity"
+            type="number"
+            value={quantity}
+            onChange={(input) => setQuantity(input.target.value)}
+            className={error ? "border-danger text-danger" : ""}
+            id="quantity"
+            placeholder="E.g: 2."
+          />
+        </div>
+        <div className="mb-1">
+          <Label className="form-label" for="full-name">
             Fee
           </Label>
           <Input
@@ -209,7 +217,7 @@ const EditItemModal = ({
           </Label>
           <Input
             name="note"
-            type="number"
+            type="text"
             disabled
             value={note}
             onChange={(input) => setNote(input.target.value)}
@@ -221,7 +229,7 @@ const EditItemModal = ({
         <span className="text-danger small">{error}</span>
         <Button
           disabled={isLoading}
-          onClick={handleUpdateOrder}
+          onClick={handleUpdateItem}
           className="me-1"
           color="primary"
         >

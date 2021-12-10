@@ -30,5 +30,18 @@ export const useOrder = (success, error) => {
     }
   };
 
-  return { fetchOrder, updateOrder, isLoading };
+  const updateItem = async ({ orderId, itemId }, args) => {
+    setIsLoading(true);
+    try {
+      await apiService.patch(`/admin/orders/${orderId}/items/${itemId}`, args);
+      setIsLoading(false);
+      fetchOrder(orderId);
+    } catch (e) {
+      console.log(e);
+      setIsLoading(false);
+      return error && error(e?.response?.data || { message: e?.message });
+    }
+  };
+
+  return { updateItem, fetchOrder, updateOrder, isLoading };
 };

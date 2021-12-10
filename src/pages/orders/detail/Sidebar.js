@@ -1,7 +1,7 @@
 import classnames from "classnames";
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardBody, Row, Col, Button, Spinner } from "reactstrap";
-import { CheckCircle } from "react-feather";
+import { CheckCircle, X } from "react-feather";
 import { formatMoney } from "@utils";
 import Select from "react-select";
 import { useOrder } from "@src/hooks";
@@ -15,7 +15,7 @@ const ToastContent = ({ message }) => (
   </>
 );
 
-const Sidebar = ({ order, sidebarOpen, onUpdateOrder }) => {
+const Sidebar = ({ order, sidebarOpen, onUpdateOrder, setSidebarOpen }) => {
   const [status, setStatus] = useState({
     value: order.status,
     label: order.status,
@@ -53,7 +53,23 @@ const Sidebar = ({ order, sidebarOpen, onUpdateOrder }) => {
 
   const handleUpdateOrder = () => {
     setError("");
-    updateOrder(order._id, { ...order, status: status.value });
+    let count = 0;
+    order.items.forEach((it) => {
+      if (status.value === "PROCESSED" && (!it.price || !it.fee)) {
+        count++;
+      }
+    });
+    if (count > 0) {
+      return toast.error(
+        <ToastContent message="Please update items prices and fees!" />,
+        {
+          icon: <X className="text-danger" />,
+          transition: Slide,
+          autoClose: 3000,
+        }
+      );
+    }
+    updateOrder(order._id, { status: status.value });
   };
 
   useEffect(() => {
@@ -97,6 +113,13 @@ const Sidebar = ({ order, sidebarOpen, onUpdateOrder }) => {
             </Col>
           </Row>
           <Card>
+            <Row className="justify-content-end d-lg-none mt-3">
+              <X
+                onClick={() => setSidebarOpen(false)}
+                style={{ width: "auto" }}
+                className="mx-1"
+              />
+            </Row>
             <CardBody>
               <div className="multi-range-price">
                 <h6 className="filter-title mt-0">Location</h6>

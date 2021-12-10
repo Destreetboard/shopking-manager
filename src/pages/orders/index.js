@@ -38,14 +38,8 @@ import Breadcrumbs from "@components/breadcrumbs";
 
 // ** renders client column
 const renderClient = (row) => {
-  const stateNum = Math.floor(Math.random() * 5),
-    states = [
-      "light-success",
-      "light-danger",
-      "light-warning",
-      "light-info",
-      "light-primary",
-    ],
+  const stateNum = Math.floor(Math.random() * 4),
+    states = ["light-success", "light-warning", "light-info", "light-primary"],
     color = states[stateNum];
 
   if (row.user.photo) {
@@ -159,7 +153,7 @@ const OrdersPage = () => {
       {
         sortable: true,
         minWidth: "102px",
-        sortField: "invoiceStatus",
+        sortField: "status",
         name: <TrendingUp size={14} />,
         selector: (row) => row.satus,
         cell: (row) => {

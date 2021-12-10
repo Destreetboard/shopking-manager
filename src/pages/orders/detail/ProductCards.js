@@ -11,14 +11,19 @@ const ProductCards = ({ items, user, onUpdateOrder, order }) => {
 
   const renderProducts = () => {
     if (items.length) {
+      const [selectedImg, setSelectedImg] = useState({ id: null, img: "" });
       return items.map((item) => {
         return (
           <Card className="ecommerce-card" key={item.name}>
             <div className="item-img text-center mx-auto">
-              {items.images && (
+              {item.images && (
                 <img
                   className="img-fluid card-img-top"
-                  src={item.images[0]}
+                  src={
+                    selectedImg.id === item._id
+                      ? selectedImg.img
+                      : item.images[0]
+                  }
                   alt={item.name}
                 />
               )}
@@ -59,6 +64,29 @@ const ProductCards = ({ items, user, onUpdateOrder, order }) => {
                 ) : (
                   <span className="text-warning">Add Fee</span>
                 )}
+                <span className="d-block">
+                  {item.images.map((img) => {
+                    return (
+                      <img
+                        key={img}
+                        onClick={() => {
+                          setSelectedImg({ id: item._id, img });
+                        }}
+                        style={{
+                          borderRadius: 5,
+                          marginRight: 5,
+                          borderWidth: 5,
+                        }}
+                        className={
+                          img === selectedImg.img ? "border-success" : ""
+                        }
+                        alt={img}
+                        src={img}
+                        width="50"
+                      />
+                    );
+                  })}
+                </span>
               </CardText>
             </CardBody>
             <div className="item-options text-center">
@@ -75,7 +103,7 @@ const ProductCards = ({ items, user, onUpdateOrder, order }) => {
                       <span className="text-warning">Add Price</span>
                     )}
                   </h4>
-                  {item.price && (
+                  {!item.price && (
                     <CardText className="shipping">
                       <Badge color="light-warning">
                         Est: {formatMoney(item.estimatedPrice)}

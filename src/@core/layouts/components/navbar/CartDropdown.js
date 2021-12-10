@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useEffect, Fragment, useState } from "react";
+import React, { useEffect, Fragment, useState, useMemo } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { ShoppingCart } from "react-feather";
 import {
@@ -18,13 +18,18 @@ import { formatMoney } from "@utils";
 
 const CartDropdown = () => {
   const dispatch = useDispatch();
-  const { orders } = useSelector((state) => state);
+  const { orders: storeOrders } = useSelector((state) => state);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const { fetchOrders } = useOrders((success) => {
     dispatch(setOrders(success));
   });
+
+  const orders = useMemo(
+    () => storeOrders.filter((o) => o.status === "PENDING"),
+    [storeOrders]
+  );
 
   useEffect(() => {
     setTimeout(fetchOrders, 60000);
@@ -69,14 +74,6 @@ const CartDropdown = () => {
 
               return (
                 <div key={item._id} className="list-item align-items-center">
-                  {item.images && (
-                    <img
-                      className="d-block rounded me-1"
-                      src={item.images[0]}
-                      alt={item.orderNo}
-                      width="62"
-                    />
-                  )}
                   <div className="list-item-body flex-grow-1">
                     <div className="media-heading">
                       <h6 className="cart-item-title">

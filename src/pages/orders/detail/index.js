@@ -44,7 +44,11 @@ const OrderDetails = ({ match }) => {
         order={order}
         setSidebarOpen={setSidebarOpen}
       />
-      <Sidebar sidebarOpen={sidebarOpen} order={order} />
+      <Sidebar
+        setSidebarOpen={setSidebarOpen}
+        sidebarOpen={sidebarOpen}
+        order={order}
+      />
     </Fragment>
   );
 };
