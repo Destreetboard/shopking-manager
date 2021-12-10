@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X } from "react-feather";
+import { X, CheckCircle } from "react-feather";
 import {
   Modal,
   Input,
@@ -12,9 +12,16 @@ import {
 import { useLocations } from "../../hooks";
 import { useDispatch } from "react-redux";
 import { setLocations } from "@store/locations";
-
-// ** Styles
 import "@styles/react/libs/flatpickr/flatpickr.scss";
+import { toast, Slide } from "react-toastify";
+
+const ToastContent = ({ message }) => (
+  <>
+    <div className="toastify-body">
+      <span>{message}</span>
+    </div>
+  </>
+);
 
 const EditLocationModal = ({ open, handleModal, location }) => {
   const dispatch = useDispatch();
@@ -25,6 +32,11 @@ const EditLocationModal = ({ open, handleModal, location }) => {
   const { updateLocation, isUpdatingLocation } = useLocations(
     (success) => {
       dispatch(setLocations(success));
+      toast.success(<ToastContent message="Location Updated Successfully!" />, {
+        icon: <CheckCircle className="text-success" />,
+        transition: Slide,
+        autoClose: 3000,
+      });
       return handleModal && handleModal();
     },
     (err) => {

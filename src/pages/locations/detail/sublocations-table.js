@@ -1,5 +1,5 @@
-import { Fragment, useState, useEffect, useMemo } from "react";
-import { Edit, Trash2, ChevronDown } from "react-feather";
+import { Fragment, useState, useMemo } from "react";
+import { Edit, Trash2, ChevronDown, CheckCircle } from "react-feather";
 import {
   Row,
   Col,
@@ -14,7 +14,16 @@ import {
 import EditSubLocationModal from "../EditSubLocationModal";
 import ReactPaginate from "react-paginate";
 import DataTable from "react-data-table-component";
-import { useSubLocations } from "../../../hooks";
+import { useSubLocations } from "@src/hooks";
+import { toast, Slide } from "react-toastify";
+
+const ToastContent = ({ message }) => (
+  <>
+    <div className="toastify-body">
+      <span>{message}</span>
+    </div>
+  </>
+);
 
 const SubLocationTable = ({
   location,
@@ -32,6 +41,14 @@ const SubLocationTable = ({
   const { deleteSubLocation, isDeletingSubLocation } = useSubLocations(
     () => {
       onLocationChange();
+      toast.success(
+        <ToastContent message="Sub Location Deleted Successfully!" />,
+        {
+          icon: <CheckCircle className="text-success" />,
+          transition: Slide,
+          autoClose: 3000,
+        }
+      );
     },
     (err) => {
       setError(err?.message);

@@ -14,9 +14,19 @@ import {
   Label,
   Spinner,
 } from "reactstrap";
+import { CheckCircle } from "react-feather";
 import { useLocations } from "../../hooks";
 import { setLocations } from "@store/locations";
 import { useDispatch } from "react-redux";
+import { toast, Slide } from "react-toastify";
+
+const ToastContent = ({ message }) => (
+  <>
+    <div className="toastify-body">
+      <span>{message}</span>
+    </div>
+  </>
+);
 
 const Locations = () => {
   const dispatch = useDispatch();
@@ -27,6 +37,11 @@ const Locations = () => {
   const { createLocation, isCreatingLocation } = useLocations(
     (success) => {
       dispatch(setLocations(success));
+      toast.success(<ToastContent message="Location Created Successfully!" />, {
+        icon: <CheckCircle className="text-success" />,
+        transition: Slide,
+        autoClose: 3000,
+      });
       setName("");
     },
     (err) => {

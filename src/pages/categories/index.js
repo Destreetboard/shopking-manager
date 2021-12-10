@@ -1,9 +1,6 @@
-// ** React Imports
 import React, { Fragment } from "react";
 import CategoriesTable from "./categories-table";
 import { useCategories } from "../../hooks";
-
-// ** Custom Components
 import Breadcrumbs from "@components/breadcrumbs";
 import {
   Card,
@@ -18,8 +15,18 @@ import {
   Label,
   Spinner,
 } from "reactstrap";
+import { CheckCircle } from "react-feather";
 import { useDispatch } from "react-redux";
 import { setCategories } from "@store/categories";
+import { toast, Slide } from "react-toastify";
+
+const ToastContent = ({ message }) => (
+  <>
+    <div className="toastify-body">
+      <span>{message}</span>
+    </div>
+  </>
+);
 
 const Categories = () => {
   const dispatch = useDispatch();
@@ -31,6 +38,11 @@ const Categories = () => {
     (success) => {
       setName("");
       dispatch(setCategories(success));
+      toast.success(<ToastContent message="Category Created Successfully!" />, {
+        icon: <CheckCircle className="text-success" />,
+        transition: Slide,
+        autoClose: 3000,
+      });
     },
     (err) => {
       setError(err?.message);

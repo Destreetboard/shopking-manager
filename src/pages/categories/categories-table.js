@@ -1,6 +1,6 @@
 // ** React Imports
 import { Fragment, useState, useEffect, useMemo } from "react";
-import { Edit, Trash2, ChevronDown } from "react-feather";
+import { Edit, Trash2, ChevronDown, CheckCircle } from "react-feather";
 
 // ** Reactstrap Imports
 import {
@@ -14,17 +14,21 @@ import {
   Alert,
   Spinner,
 } from "reactstrap";
-
-// ** Add New Modal Component
 import EditCategoryModal from "./EditCategoryModal";
-
-// ** Third Party Components
 import ReactPaginate from "react-paginate";
 import DataTable from "react-data-table-component";
-
 import { useCategories } from "../../hooks";
 import { useSelector, useDispatch } from "react-redux";
 import { setCategories } from "@store/categories";
+import { toast, Slide } from "react-toastify";
+
+const ToastContent = ({ message }) => (
+  <>
+    <div className="toastify-body">
+      <span>{message}</span>
+    </div>
+  </>
+);
 
 const CategoriesTable = () => {
   const { categories: data } = useSelector((state) => state);
@@ -54,9 +58,14 @@ const CategoriesTable = () => {
     fetchCategories();
   }, []);
 
-  const handleDeleteCategory = (id) => {
+  const handleDeleteCategory = async (id) => {
     if (confirm("Are you sure you want to delete this category?")) {
-      deleteCategory(id);
+      await deleteCategory(id);
+      toast.success(<ToastContent message="Category Deleted Successfully!" />, {
+        icon: <CheckCircle className="text-success" />,
+        transition: Slide,
+        autoClose: 3000,
+      });
     }
   };
 

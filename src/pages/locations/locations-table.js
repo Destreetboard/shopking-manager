@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect, useMemo } from "react";
-import { Edit, Trash2, ChevronDown, Eye } from "react-feather";
+import { Edit, Trash2, ChevronDown, Eye, CheckCircle } from "react-feather";
 import {
   Row,
   Col,
@@ -18,6 +18,15 @@ import { useLocations } from "../../hooks";
 import { useSelector, useDispatch } from "react-redux";
 import { setLocations } from "@store/locations";
 import { Link } from "react-router-dom";
+import { toast, Slide } from "react-toastify";
+
+const ToastContent = ({ message }) => (
+  <>
+    <div className="toastify-body">
+      <span>{message}</span>
+    </div>
+  </>
+);
 
 const LocationDTable = () => {
   const { locations: data } = useSelector((state) => state);
@@ -47,9 +56,14 @@ const LocationDTable = () => {
     fetchLocations();
   }, []);
 
-  const handleDeleteLocation = (id) => {
+  const handleDeleteLocation = async (id) => {
     if (confirm("Are you sure you want to delete this location?")) {
-      deleteLocation(id);
+      await deleteLocation(id);
+      toast.success(<ToastContent message="Location Deleted Successfully!" />, {
+        icon: <CheckCircle className="text-success" />,
+        transition: Slide,
+        autoClose: 3000,
+      });
     }
   };
 

@@ -13,7 +13,7 @@ export const useOrders = (success, error) => {
     } catch (e) {
       console.log(e);
       setIsLoading(false);
-      return error && error(e?.response?.data);
+      return error && error(e?.response?.data || { message: e?.message });
     }
   };
 

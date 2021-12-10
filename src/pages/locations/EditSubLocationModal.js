@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X } from "react-feather";
+import { X, CheckCircle } from "react-feather";
 import {
   Modal,
   Input,
@@ -11,6 +11,15 @@ import {
 } from "reactstrap";
 import { useSubLocations } from "../../hooks";
 import "@styles/react/libs/flatpickr/flatpickr.scss";
+import { toast, Slide } from "react-toastify";
+
+const ToastContent = ({ message }) => (
+  <>
+    <div className="toastify-body">
+      <span>{message}</span>
+    </div>
+  </>
+);
 
 const EditLocationModal = ({ open, handleModal, subLocation, location }) => {
   const [address, setAddress] = useState(subLocation.address);
@@ -19,6 +28,14 @@ const EditLocationModal = ({ open, handleModal, subLocation, location }) => {
 
   const { updateSubLocation, isUpdatingSubLocation } = useSubLocations(
     () => {
+      toast.success(
+        <ToastContent message="Sub location Updated Successfully!" />,
+        {
+          icon: <CheckCircle className="text-success" />,
+          transition: Slide,
+          autoClose: 3000,
+        }
+      );
       return handleModal && handleModal();
     },
     (err) => {

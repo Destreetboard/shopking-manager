@@ -1,7 +1,7 @@
 export * from "./useLogin";
 // export * from "./useEmailVerification";
 // export * from "./useResetPassword";
-// export * from "./useOrder";
+export * from "./useOrder";
 export * from "./useOrders";
 export * from "./useLocations";
 export * from "./useSubLocations";

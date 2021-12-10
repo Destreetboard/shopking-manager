@@ -16,7 +16,7 @@ export const useCategories = (success, error) => {
     } catch (e) {
       console.log(e);
       setIsLoadingCategories(false);
-      return error && error(e?.response?.data);
+      return error && error(e?.response?.data || { message: e?.message });
     }
   };
 
@@ -29,7 +29,7 @@ export const useCategories = (success, error) => {
     } catch (e) {
       console.log(e);
       setIsCreatingCategory(false);
-      return error && error(e?.response?.data);
+      return error && error(e?.response?.data || { message: e?.message });
     }
   };
 
@@ -42,7 +42,7 @@ export const useCategories = (success, error) => {
     } catch (e) {
       console.log(e);
       setIsUpdatingCategory(false);
-      return error && error(e?.response?.data);
+      return error && error(e?.response?.data || { message: e?.message });
     }
   };
 
@@ -55,7 +55,7 @@ export const useCategories = (success, error) => {
     } catch (e) {
       console.log(e);
       setIsDeletingCategory(false);
-      return error && error(e?.response?.data);
+      return error && error(e?.response?.data || { message: e?.message });
     }
   };
 

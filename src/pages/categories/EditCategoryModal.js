@@ -1,6 +1,6 @@
 // ** React Imports
 import { useState } from "react";
-import { User, X } from "react-feather";
+import { CheckCircle, X } from "react-feather";
 import {
   Modal,
   Input,
@@ -14,6 +14,15 @@ import "@styles/react/libs/flatpickr/flatpickr.scss";
 import { useCategories } from "../../hooks";
 import { useDispatch } from "react-redux";
 import { setCategories } from "@store/categories";
+import { toast, Slide } from "react-toastify";
+
+const ToastContent = ({ message }) => (
+  <>
+    <div className="toastify-body">
+      <span>{message}</span>
+    </div>
+  </>
+);
 
 const EditLocationModal = ({ open, handleModal, category }) => {
   const dispatch = useDispatch();
@@ -24,6 +33,11 @@ const EditLocationModal = ({ open, handleModal, category }) => {
   const { updateCategory, isUpdatingCategory } = useCategories(
     (success) => {
       dispatch(setCategories(success));
+      toast.success(<ToastContent message="Category Updated Successfully!" />, {
+        icon: <CheckCircle className="text-success" />,
+        transition: Slide,
+        autoClose: 3000,
+      });
       return handleModal && handleModal();
     },
     (err) => {

@@ -1,73 +1,51 @@
-// ** React Imports
-import { useEffect, Fragment } from "react";
-import { useParams } from "react-router-dom";
+import { Fragment, useState, useEffect } from "react";
+import Sidebar from "./Sidebar";
+import Products from "./Products";
+import Breadcrumbs from "@components/breadcrumbs";
+import "@styles/react/apps/app-ecommerce.scss";
+import { Spinner } from "reactstrap";
+import { useOrder } from "@src/hooks";
 
-// ** Product detail components
-import ItemFeatures from "./ItemFeatures";
-import ProductDetails from "./ProductDetails";
-import RelatedProducts from "./RelatedProducts";
+const OrderDetails = ({ match }) => {
+  const params = match.params;
+  const [order, setOrder] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-// ** Custom Components
-import BreadCrumbs from "@components/breadcrumbs";
+  const onUpdateOrder = (ord) => {
+    setOrder(ord);
+  };
 
-// ** Reactstrap Imports
-import { Card, CardBody } from "reactstrap";
+  const { fetchOrder } = useOrder(
+    (success) => {
+      setOrder(success);
+    },
+    (err) => {}
+  );
 
-// ** Store & Actions
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getProduct,
-  deleteWishlistItem,
-  addToWishlist,
-  addToCart,
-} from "../store";
-
-import "@styles/base/pages/app-ecommerce-details.scss";
-
-const Details = () => {
-  // ** Vars
-  const params = useParams().product;
-  const productId = params.substring(params.lastIndexOf("-") + 1);
-
-  // ** Store Vars
-  const dispatch = useDispatch();
-  const store = useSelector((state) => state.ecommerce);
-
-  // ** ComponentDidMount : Get product
   useEffect(() => {
-    dispatch(getProduct(productId));
+    if (params.id) {
+      fetchOrder(params.id);
+    }
   }, []);
+
+  if (!order) {
+    return <Spinner color="primary" />;
+  }
 
   return (
     <Fragment>
-      <BreadCrumbs
-        breadCrumbTitle="Product Details"
-        breadCrumbParent="eCommerce"
-        breadCrumbActive="Details"
+      <Breadcrumbs
+        breadCrumbTitle={order.orderNo}
+        breadCrumbParent="Orders"
+        breadCrumbActive={order.orderNo}
       />
-      <div className="app-ecommerce-details">
-        {Object.keys(store.productDetail).length ? (
-          <Card>
-            <CardBody>
-              <ProductDetails
-                dispatch={dispatch}
-                addToCart={addToCart}
-                productId={productId}
-                getProduct={getProduct}
-                data={store.productDetail}
-                addToWishlist={addToWishlist}
-                deleteWishlistItem={deleteWishlistItem}
-              />
-            </CardBody>
-            <ItemFeatures />
-            <CardBody>
-              <RelatedProducts />
-            </CardBody>
-          </Card>
-        ) : null}
-      </div>
+      <Products
+        onUpdateOrder={onUpdateOrder}
+        order={order}
+        setSidebarOpen={setSidebarOpen}
+      />
+      <Sidebar sidebarOpen={sidebarOpen} order={order} />
     </Fragment>
   );
 };
-
-export default Details;
+export default OrderDetails;

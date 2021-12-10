@@ -16,9 +16,9 @@ export const useSubLocations = (success, error) => {
       setIsCreatingSubLocation(false);
       return success && success();
     } catch (e) {
-      console.log(e);
+      console.log("Error ========>", e.message);
       setIsCreatingSubLocation(false);
-      return error && error(e?.response?.data);
+      return error && error(e?.response?.data || { message: e?.message });
     }
   };
 
@@ -34,7 +34,7 @@ export const useSubLocations = (success, error) => {
     } catch (e) {
       console.log(e);
       setIsUpdatingSubLocation(false);
-      return error && error(e?.response?.data);
+      return error && error(e?.response?.data || { message: e?.message });
     }
   };
 
@@ -49,7 +49,7 @@ export const useSubLocations = (success, error) => {
     } catch (e) {
       console.log(e);
       setIsDeletingSubLocation(false);
-      return error && error(e.response.data);
+      return error && error(e?.response?.data || { message: e?.message });
     }
   };
 

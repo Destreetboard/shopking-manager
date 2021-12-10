@@ -54,8 +54,9 @@ const CartDropdown = () => {
               const price = item.items
                 .map((it) => {
                   return (
-                    (it.price ? parseInt(it.price) : it.estimatedPrice) *
-                    parseInt(it.quantity)
+                    (it.price
+                      ? parseInt(it.price)
+                      : parseInt(it.estimatedPrice)) * parseInt(it.quantity)
                   );
                 })
                 .reduce((a, b) => a + b, 0);

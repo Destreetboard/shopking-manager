@@ -23,6 +23,7 @@ const UsersRotues = [
   },
   {
     path: "/dashboard/orders/:id",
+    className: "ecommerce-application",
     component: lazy(() => import("../../pages/orders/detail")),
     exact: true,
   },

@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useState, useMemo, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react";
 
 // ** Custom Components
 import Breadcrumbs from "@components/breadcrumbs";
@@ -16,9 +16,19 @@ import {
   Label,
   Spinner,
 } from "reactstrap";
+import { CheckCircle } from "react-feather";
 import SubLocationsTable from "./sublocations-table";
 import { useHistory } from "react-router-dom";
-import { useSubLocations, useLocations } from "../../../hooks";
+import { useSubLocations, useLocations } from "@src/hooks";
+import { toast, Slide } from "react-toastify";
+
+const ToastContent = ({ message }) => (
+  <>
+    <div className="toastify-body">
+      <span>{message}</span>
+    </div>
+  </>
+);
 
 const LocationSubLocations = ({ match }) => {
   const history = useHistory();
@@ -49,6 +59,14 @@ const LocationSubLocations = ({ match }) => {
       fetchLocation(match.params.id);
       setAddress("");
       setPrice("");
+      toast.success(
+        <ToastContent message="Sub location Created Successfully!" />,
+        {
+          icon: <CheckCircle className="text-success" />,
+          transition: Slide,
+          autoClose: 3000,
+        }
+      );
     },
     (err) => {
       setError(err?.message);

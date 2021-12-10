@@ -5,10 +5,6 @@ import StatsHorizontal from "@components/widgets/stats/StatsHorizontal";
 import ReactPaginate from "react-paginate";
 import {
   ChevronDown,
-  User,
-  UserCheck,
-  UserPlus,
-  UserX,
   Eye,
   TrendingUp,
   CheckCircle,
@@ -346,12 +342,12 @@ const OrdersPage = () => {
         </Col>
         <Col lg="3" sm="6">
           <StatsHorizontal
-            color="danger"
-            statTitle="Declined Orders"
+            color="info"
+            statTitle="Processed Orders"
             icon={<ShoppingCart size={20} />}
             renderStats={
               <h3 className="fw-bolder mb-75">
-                {orders.filter((o) => o.status === "DECLINED").length}
+                {orders.filter((o) => o.status === "PROCESSED").length}
               </h3>
             }
           />
