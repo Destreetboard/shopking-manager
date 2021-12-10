@@ -1,18 +1,10 @@
-// ** React Imports
 import { Link } from "react-router-dom";
-
-// ** Reactstrap Imports
 import { Button } from "reactstrap";
-
-// ** Custom Hooks
 import { useSkin } from "@hooks/useSkin";
-
-// ** Styles
 import "@styles/base/pages/page-misc.scss";
 import themeConfig from "@src/configs/themeConfig";
 
 const NotAuthorized = () => {
-  // ** Hooks
   const { skin } = useSkin();
 
   const illustration =
