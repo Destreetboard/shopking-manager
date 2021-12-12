@@ -269,7 +269,7 @@ const UsersList = () => {
             {renderClient(row)}
             <div className="d-flex flex-column">
               <Link
-                to={`/dashboard/users/${row.id}`}
+                to={`/dashboard/users/${row._id}`}
                 className="user_name text-truncate text-body"
               >
                 <span className="fw-bolder">{`${row.firstname} ${row.lastname}`}</span>

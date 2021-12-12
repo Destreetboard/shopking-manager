@@ -1,69 +1,204 @@
 // ** React Imports
-import { useState, Fragment } from "react";
-
-// ** Table Columns
-import { data, advSearchColumns } from "./vendors-data";
-
-// ** Third Party Components
-import Flatpickr from "react-flatpickr";
-import ReactPaginate from "react-paginate";
-import { ChevronDown } from "react-feather";
-import DataTable from "react-data-table-component";
-
-// ** Reactstrap Imports
+import { Fragment, useState, useEffect, useMemo } from "react";
+import { Edit, Trash2, ChevronDown, CheckCircle } from "react-feather";
 import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  Input,
-  Label,
   Row,
   Col,
+  Card,
+  Input,
+  Label,
+  CardTitle,
+  CardHeader,
+  Alert,
+  Spinner,
+  Badge,
 } from "reactstrap";
+import EditVendorModal from "./EditVendorModal";
+import ReactPaginate from "react-paginate";
+import DataTable from "react-data-table-component";
+import { useVendors } from "../../hooks";
+import { useSelector, useDispatch } from "react-redux";
+import { setVendors } from "@store/vendors";
+import { toast, Slide } from "react-toastify";
 
-// ** Styles
-import "@styles/react/libs/flatpickr/flatpickr.scss";
+const ToastContent = ({ message }) => (
+  <>
+    <div className="toastify-body">
+      <span>{message}</span>
+    </div>
+  </>
+);
 
-const CategoriesTable = () => {
+const VendorsTable = () => {
+  const { vendors: data } = useSelector((state) => state);
+  const dispatch = useDispatch();
   // ** States
-  const [Picker, setPicker] = useState("");
-  const [searchName, setSearchName] = useState("");
-  const [searchPost, setSearchPost] = useState("");
-  const [searchCity, setSearchCity] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
-  const [searchEmail, setSearchEmail] = useState("");
-  const [searchSalary, setSearchSalary] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [vendor, setVendor] = useState(null);
+  const [error, setError] = useState("");
+
+  const { fetchVendors, deleteVendor, isDeletingVendor, isLoadingVendors } =
+    useVendors(
+      (success) => {
+        dispatch(setVendors(success));
+      },
+      (err) => {
+        setError(err?.message);
+      }
+    );
+
+  useEffect(() => {
+    fetchVendors();
+  }, []);
+
+  const handleDeleteCategory = async (id) => {
+    if (confirm("Are you sure you want to delete this vendor?")) {
+      await deleteVendor(id);
+      toast.success(<ToastContent message="Vendor Deleted Successfully!" />, {
+        icon: <CheckCircle className="text-success" />,
+        transition: Slide,
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const columns = useMemo(
+    () => [
+      {
+        name: "Name",
+        minWidth: "250px",
+        sortable: (row) => row.name,
+        selector: (row) => row.name.toUpperCase(),
+      },
+      {
+        name: "Contact",
+        minWidth: "250px",
+        selector: (row) => (
+          <div className="d-flex justify-content-left align-items-center">
+            <div className="d-flex flex-column">
+              <a
+                href={`tel:${row.phone}`}
+                className="user_name text-truncate text-body"
+              >
+                <span className="fw-bolder">{row.phone}</span>
+              </a>
+              <a
+                href={`mailto:${row.email}`}
+                className="user_name text-truncate text-body"
+              >
+                <small className="text-truncate text-muted mb-0">
+                  {row.email}
+                </small>
+              </a>
+              <small className="text-truncate text-muted mb-0">
+                {row.address}
+              </small>
+            </div>
+          </div>
+        ),
+        sortable: (row) => `${row.email} ${row.phone} ${row.address}`,
+      },
+      {
+        name: "Website",
+        minWidth: "180px",
+        sortable: (row) => row.website,
+        selector: (row) => (
+          <a href={row.website} target="_blank">
+            {row.website}
+          </a>
+        ),
+      },
+      {
+        name: "Categories",
+        minWidth: "250px",
+        selector: (row) => {
+          return row.categories.map((c) => (
+            <Badge key={c._id} color="light-info">
+              {c.name}
+            </Badge>
+          ));
+        },
+        sortable: (row) => row.catgories.map((c) => c.name),
+      },
+      {
+        name: "Actions",
+        allowOverflow: true,
+        cell: (row) => {
+          return (
+            <div className="d-flex">
+              <Edit
+                size={15}
+                onClick={(e) => {
+                  setVendor(row);
+                }}
+              />
+              <Trash2
+                className="text-danger mx-1"
+                size={15}
+                onClick={() => handleDeleteCategory(row._id)}
+              />
+            </div>
+          );
+        },
+      },
+    ],
+    []
+  );
+
+  // ** Function to handle filter
+  const handleFilter = (e) => {
+    const value = e.target.value;
+    let updatedData = [];
+    setSearchValue(value);
+
+    if (value.length) {
+      updatedData = data.filter((item) => {
+        const startsWith =
+          item.name.toLowerCase().startsWith(value.toLowerCase()) ||
+          item.email.toLowerCase().startsWith(value.toLowerCase()) ||
+          item.phone.toLowerCase().startsWith(value.toLowerCase()) ||
+          item.address.toLowerCase().startsWith(value.toLowerCase()) ||
+          item.website.toLowerCase().startsWith(value.toLowerCase());
+
+        const includes =
+          item.name.toLowerCase().includes(value.toLowerCase()) ||
+          item.email.toLowerCase().includes(value.toLowerCase()) ||
+          item.phone.toLowerCase().includes(value.toLowerCase()) ||
+          item.website.toLowerCase().includes(value.toLowerCase()) ||
+          item.address.toLowerCase().includes(value.toLowerCase()) ||
+          item.categories.includes(value);
+
+        if (startsWith) {
+          return startsWith;
+        } else if (!startsWith && includes) {
+          return includes;
+        } else return null;
+      });
+      setFilteredData(updatedData);
+      setSearchValue(value);
+    }
+  };
 
   // ** Function to handle Pagination
-  const handlePagination = (page) => setCurrentPage(page.selected);
-
-  // ** Table data to render
-  const dataToRender = () => {
-    if (
-      searchName.length ||
-      searchPost.length ||
-      searchEmail.length ||
-      searchCity.length ||
-      searchSalary.length ||
-      Picker.length
-    ) {
-      return filteredData;
-    } else {
-      return data;
-    }
+  const handlePagination = (page) => {
+    setCurrentPage(page.selected);
   };
 
   // ** Custom Pagination
   const CustomPagination = () => (
     <ReactPaginate
-      previousLabel={""}
-      nextLabel={""}
+      previousLabel=""
+      nextLabel=""
       forcePage={currentPage}
       onPageChange={(page) => handlePagination(page)}
-      pageCount={Math.ceil(dataToRender().length / 7) || 1}
-      breakLabel={"..."}
+      pageCount={
+        searchValue.length
+          ? Math.ceil(filteredData.length / 7)
+          : Math.ceil(data.length / 7) || 1
+      }
+      breakLabel="..."
       pageRangeDisplayed={2}
       marginPagesDisplayed={2}
       activeClassName="active"
@@ -75,347 +210,71 @@ const CategoriesTable = () => {
       previousLinkClassName="page-link"
       nextClassName="page-item next-item"
       previousClassName="page-item prev-item"
-      containerClassName={
-        "pagination react-paginate separated-pagination pagination-sm justify-content-end pe-1 mt-1"
-      }
+      containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pe-1 mt-1"
     />
   );
-
-  // ** Function to handle name filter
-  const handleNameFilter = (e) => {
-    const value = e.target.value;
-    let updatedData = [];
-    const dataToFilter = () => {
-      if (
-        searchEmail.length ||
-        searchPost.length ||
-        searchCity.length ||
-        searchSalary.length ||
-        Picker.length
-      ) {
-        return filteredData;
-      } else {
-        return data;
-      }
-    };
-
-    setSearchName(value);
-    if (value.length) {
-      updatedData = dataToFilter().filter((item) => {
-        const startsWith = item.full_name
-          .toLowerCase()
-          .startsWith(value.toLowerCase());
-
-        const includes = item.full_name
-          .toLowerCase()
-          .includes(value.toLowerCase());
-
-        if (startsWith) {
-          return startsWith;
-        } else if (!startsWith && includes) {
-          return includes;
-        } else return null;
-      });
-      setFilteredData([...updatedData]);
-      setSearchName(value);
-    }
-  };
-
-  // ** Function to handle email filter
-  const handleEmailFilter = (e) => {
-    const value = e.target.value;
-    let updatedData = [];
-    const dataToFilter = () => {
-      if (
-        searchName.length ||
-        searchPost.length ||
-        searchCity.length ||
-        searchSalary.length ||
-        Picker.length
-      ) {
-        return filteredData;
-      } else {
-        return data;
-      }
-    };
-
-    setSearchEmail(value);
-    if (value.length) {
-      updatedData = dataToFilter().filter((item) => {
-        const startsWith = item.email
-          .toLowerCase()
-          .startsWith(value.toLowerCase());
-
-        const includes = item.email.toLowerCase().includes(value.toLowerCase());
-
-        if (startsWith) {
-          return startsWith;
-        } else if (!startsWith && includes) {
-          return includes;
-        } else return null;
-      });
-      setFilteredData([...updatedData]);
-      setSearchEmail(value);
-    }
-  };
-
-  // ** Function to handle post filter
-  const handlePostFilter = (e) => {
-    const value = e.target.value;
-    let updatedData = [];
-    const dataToFilter = () => {
-      if (
-        searchEmail.length ||
-        searchName.length ||
-        searchCity.length ||
-        searchSalary.length ||
-        Picker.length
-      ) {
-        return filteredData;
-      } else {
-        return data;
-      }
-    };
-
-    setSearchPost(value);
-    if (value.length) {
-      updatedData = dataToFilter().filter((item) => {
-        const startsWith = item.post
-          .toLowerCase()
-          .startsWith(value.toLowerCase());
-
-        const includes = item.post.toLowerCase().includes(value.toLowerCase());
-
-        if (startsWith) {
-          return startsWith;
-        } else if (!startsWith && includes) {
-          return includes;
-        } else return null;
-      });
-      setFilteredData([...updatedData]);
-      setSearchPost(value);
-    }
-  };
-
-  // ** Function to handle city filter
-  const handleCityFilter = (e) => {
-    const value = e.target.value;
-    let updatedData = [];
-    const dataToFilter = () => {
-      if (
-        searchEmail.length ||
-        searchName.length ||
-        searchPost.length ||
-        searchSalary.length ||
-        Picker.length
-      ) {
-        return filteredData;
-      } else {
-        return data;
-      }
-    };
-
-    setSearchCity(value);
-    if (value.length) {
-      updatedData = dataToFilter().filter((item) => {
-        const startsWith = item.city
-          .toLowerCase()
-          .startsWith(value.toLowerCase());
-
-        const includes = item.city.toLowerCase().includes(value.toLowerCase());
-
-        if (startsWith) {
-          return startsWith;
-        } else if (!startsWith && includes) {
-          return includes;
-        } else return null;
-      });
-      setFilteredData([...updatedData]);
-      setSearchCity(value);
-    }
-  };
-
-  // ** Function to handle salary filter
-  const handleSalaryFilter = (e) => {
-    const value = e.target.value;
-    let updatedData = [];
-    const dataToFilter = () => {
-      if (
-        searchEmail.length ||
-        searchName.length ||
-        searchPost.length ||
-        searchCity.length ||
-        Picker.length
-      ) {
-        return filteredData;
-      } else {
-        return data;
-      }
-    };
-
-    setSearchSalary(value);
-    if (value.length) {
-      updatedData = dataToFilter().filter((item) => {
-        const startsWith = item.salary
-          .toLowerCase()
-          .startsWith(value.toLowerCase());
-
-        const includes = item.salary
-          .toLowerCase()
-          .includes(value.toLowerCase());
-
-        if (startsWith) {
-          return startsWith;
-        } else if (!startsWith && includes) {
-          return includes;
-        } else return null;
-      });
-      setFilteredData([...updatedData]);
-      setSearchSalary(value);
-    }
-  };
-
-  // ** Function to handle date filter
-  const handleDateFilter = (range) => {
-    const arr = [];
-    let updatedData = [];
-    const dataToFilter = () => {
-      if (
-        searchEmail.length ||
-        searchName.length ||
-        searchPost.length ||
-        searchCity.length ||
-        searchSalary.length
-      ) {
-        return filteredData;
-      } else {
-        return data;
-      }
-    };
-
-    range.map((i) => {
-      const date = new Date(i);
-
-      const year = date.getFullYear();
-
-      let month = (1 + date.getMonth()).toString();
-      month = month.length > 1 ? month : `0${month}`;
-
-      let day = date.getDate().toString();
-      day = day.length > 1 ? day : `0${day}`;
-
-      arr.push(`${month}/${day}/${year}`);
-      return true;
-    });
-
-    setPicker(range);
-
-    if (range.length) {
-      updatedData = dataToFilter().filter((item) => {
-        return (
-          new Date(item.start_date).getTime() >= new Date(arr[0]).getTime() &&
-          new Date(item.start_date).getTime() <= new Date(arr[1]).getTime()
-        );
-      });
-      setFilteredData([...updatedData]);
-      setPicker(range);
-    }
-  };
 
   return (
     <Fragment>
       <Card>
-        <CardHeader className="border-bottom">
-          <CardTitle tag="h4">Categories</CardTitle>
+        <CardHeader className="flex-md-row flex-column align-md-items-center align-items-start">
+          <CardTitle tag="h4">Categroies</CardTitle>
         </CardHeader>
-        <CardBody>
-          <Row className="mt-1 mb-50">
-            <Col lg="4" md="6" className="mb-1">
-              <Label className="form-label" for="name">
-                Name:
-              </Label>
-              <Input
-                id="name"
-                placeholder="Bruce Wayne"
-                value={searchName}
-                onChange={handleNameFilter}
-              />
-            </Col>
-            <Col lg="4" md="6" className="mb-1">
-              <Label className="form-label" for="email">
-                Email:
-              </Label>
-              <Input
-                type="email"
-                id="email"
-                placeholder="Bwayne@email.com"
-                value={searchEmail}
-                onChange={handleEmailFilter}
-              />
-            </Col>
-            <Col lg="4" md="6" className="mb-1">
-              <Label className="form-label" for="post">
-                Post:
-              </Label>
-              <Input
-                id="post"
-                placeholder="Web Designer"
-                value={searchPost}
-                onChange={handlePostFilter}
-              />
-            </Col>
-            <Col lg="4" md="6" className="mb-1">
-              <Label className="form-label" for="city">
-                City:
-              </Label>
-              <Input
-                id="city"
-                placeholder="San Diego"
-                value={searchCity}
-                onChange={handleCityFilter}
-              />
-            </Col>
-            <Col lg="4" md="6" className="mb-1">
-              <Label className="form-label" for="date">
-                Date:
-              </Label>
-              <Flatpickr
-                className="form-control"
-                id="date"
-                value={Picker}
-                options={{ mode: "range", dateFormat: "m/d/Y" }}
-                onChange={(date) => handleDateFilter(date)}
-              />
-            </Col>
-            <Col lg="4" md="6" className="mb-1">
-              <Label className="form-label" for="salary">
-                Salary:
-              </Label>
-              <Input
-                id="salary"
-                placeholder="10000"
-                value={searchSalary}
-                onChange={handleSalaryFilter}
-              />
-            </Col>
-          </Row>
-        </CardBody>
+        {error ? (
+          <Alert className="text-center" color="danger">
+            {error}
+            {setTimeout(() => {
+              setError("");
+            }, 5000)}
+          </Alert>
+        ) : null}
+        {isLoadingVendors || isDeletingVendor ? (
+          <div className="text-center">
+            <Spinner color="primary" />
+          </div>
+        ) : null}
+        <Row className="justify-content-end mx-0">
+          <Col
+            className="d-flex align-items-center justify-content-end mt-1"
+            md="6"
+            sm="12"
+          >
+            <Label className="me-1" for="search-input">
+              Search
+            </Label>
+            <Input
+              className="dataTable-filter mb-50"
+              type="text"
+              bsSize="sm"
+              id="search-input"
+              value={searchValue}
+              onChange={handleFilter}
+            />
+          </Col>
+        </Row>
         <div className="react-dataTable">
           <DataTable
             noHeader
             pagination
-            columns={advSearchColumns}
+            columns={columns}
             paginationPerPage={7}
             className="react-dataTable"
             sortIcon={<ChevronDown size={10} />}
             paginationDefaultPage={currentPage + 1}
             paginationComponent={CustomPagination}
-            data={dataToRender()}
+            data={searchValue.length ? filteredData : data}
           />
         </div>
       </Card>
+      {vendor && (
+        <EditVendorModal
+          vendor={vendor}
+          open={location !== null}
+          handleModal={() => setVendor(null)}
+        />
+      )}
     </Fragment>
   );
 };
 
-export default CategoriesTable;
+export default VendorsTable;
