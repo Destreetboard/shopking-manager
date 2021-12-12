@@ -55,7 +55,7 @@ const Sidebar = ({ order, sidebarOpen, onUpdateOrder, setSidebarOpen }) => {
     setError("");
     let count = 0;
     order.items.forEach((it) => {
-      if (status.value === "PROCESSED" && (!it.price || !it.fee)) {
+      if (status.value === "PROCESSED" && (!it.price || it.fee < 0)) {
         count++;
       }
     });

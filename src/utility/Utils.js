@@ -14,7 +14,7 @@ export const kFormatter = (num) => {
 export const htmlToString = (html) => html.replace(/<\/?[^>]+(>|$)/g, "");
 
 // ** Checks if the passed date is today
-const isToday = (date) => {
+export const isToday = (date) => {
   const today = new Date();
   return (
     /* eslint-disable operator-linebreak */
@@ -107,4 +107,16 @@ export const formatMoney = (amount) => {
   const currency = formatType.format(parseInt(amount));
 
   return currency.replace("NGN", "\u20A6");
+};
+
+export const formatNumber = (amount) => {
+  const formatType = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "NGN",
+    maximumSignificantDigits: 12,
+  });
+
+  const currency = formatType.format(parseInt(amount, 10));
+
+  return currency.replace("NGN", "");
 };

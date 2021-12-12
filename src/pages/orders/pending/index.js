@@ -174,7 +174,7 @@ const PendingOrdersPage = () => {
               : s === "PAID"
               ? "primary"
               : s === "PROCESSED"
-              ? "primary"
+              ? "info"
               : s === "DECLINED" || s === "CANCELLED"
               ? "danger"
               : "primary";

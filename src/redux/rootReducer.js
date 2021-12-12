@@ -5,10 +5,11 @@ import auth from "./authentication";
 import categories from "./categories";
 import locations from "./locations";
 import orders from "./orders";
+import users from "./users";
 
 import todo from "@src/views/apps/todo/store";
 import chat from "@src/views/apps/chat/store";
-import users from "@src/views/apps/user/store";
+// import users from "@src/views/apps/user/store";
 import email from "@src/views/apps/email/store";
 import invoice from "@src/views/apps/invoice/store";
 import calendar from "@src/views/apps/calendar/store";
@@ -21,10 +22,11 @@ const rootReducer = {
   categories,
   locations,
   orders,
+  users,
   todo,
   chat,
   email,
-  users,
+  // users,
   navbar,
   layout,
   invoice,
