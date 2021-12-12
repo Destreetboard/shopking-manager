@@ -3,7 +3,7 @@ import { lazy } from "react";
 const DashboardRoutes = [
   {
     path: "/dashboard",
-    component: lazy(() => import("../../views/dashboard/ecommerce")),
+    component: lazy(() => import("../../pages/dashboard")),
     exact: true,
   },
 ];
