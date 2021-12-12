@@ -8,4 +8,6 @@ export * from "./useSubLocations";
 export * from "./useCategories";
 // export * from "./useOrderDetails";
 export * from "./useUser";
+export * from "./useUsers";
+export * from "./useVendors";
 // export * from "./usePassword";

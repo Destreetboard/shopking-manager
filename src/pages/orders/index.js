@@ -164,7 +164,7 @@ const OrdersPage = () => {
               : s === "PAID"
               ? "primary"
               : s === "PROCESSED"
-              ? "primary"
+              ? "info"
               : s === "DECLINED" || s === "CANCELLED"
               ? "danger"
               : "primary";
@@ -383,7 +383,7 @@ const OrdersPage = () => {
               noHeader
               pagination
               columns={columns}
-              paginationPerPage={7}
+              paginationPerPage={15}
               className="react-dataTable"
               sortIcon={<ChevronDown size={10} />}
               paginationDefaultPage={currentPage + 1}

@@ -1,62 +1,92 @@
-// ** React Imports
-import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { Row, Col, Alert, Spinner } from "reactstrap";
+import UserTabs from "./Tabs";
+import UserInfoCard from "./UserInfoCard";
+import "@styles/react/apps/app-users.scss";
+import { useUser, useOrders } from "../../../hooks";
+import { toast, Slide } from "react-toastify";
 
-// ** Store & Actions
-import { getUser } from '../store'
-import { useSelector, useDispatch } from 'react-redux'
-
-// ** Reactstrap Imports
-import { Row, Col, Alert } from 'reactstrap'
-
-// ** User View Components
-import UserTabs from './Tabs'
-import PlanCard from './PlanCard'
-import UserInfoCard from './UserInfoCard'
-
-// ** Styles
-import '@styles/react/apps/app-users.scss'
+const ToastContent = ({ message }) => (
+  <>
+    <div className="toastify-body">
+      <span>{message}</span>
+    </div>
+  </>
+);
 
 const UserView = () => {
-  // ** Store Vars
-  const store = useSelector(state => state.users)
-  const dispatch = useDispatch()
+  const [user, setUser] = useState(null);
+  const [active, setActive] = useState("1");
+  const [orders, setOrders] = useState([]);
 
-  // ** Hooks
-  const { id } = useParams()
+  const { id } = useParams();
+
+  const { getUser, isFetchingUser } = useUser(
+    (success) => {
+      setUser(success);
+    },
+    (err) => {
+      toast.error(
+        <ToastContent
+          message={`Unable to get user  details! ${err?.message}`}
+        />,
+        {
+          icon: <X className="text-danger" />,
+          transition: Slide,
+          autoClose: 5000,
+        }
+      );
+    }
+  );
+
+  const { fetchUserOrders, isLoading } = useOrders((success) => {
+    setOrders(success);
+  });
 
   // ** Get suer on mount
   useEffect(() => {
-    dispatch(getUser(parseInt(id)))
-  }, [dispatch])
+    getUser(id);
+  }, []);
 
-  const [active, setActive] = useState('1')
-
-  const toggleTab = tab => {
-    if (active !== tab) {
-      setActive(tab)
+  useEffect(() => {
+    if (user) {
+      fetchUserOrders(id);
     }
-  }
+  }, [user]);
 
-  return store.selectedUser !== null && store.selectedUser !== undefined ? (
-    <div className='app-user-view'>
+  const toggleTab = (tab) => {
+    if (active !== tab) {
+      setActive(tab);
+    }
+  };
+
+  return user ? (
+    <div className="app-user-view">
       <Row>
-        <Col xl='4' lg='5' xs={{ order: 1 }} md={{ order: 0, size: 5 }}>
-          <UserInfoCard selectedUser={store.selectedUser} />
-          <PlanCard />
+        <Col xl="4" lg="5" xs={{ order: 1 }} md={{ order: 0, size: 5 }}>
+          <UserInfoCard pushUser={setUser} orders={orders} user={user} />
         </Col>
-        <Col xl='8' lg='7' xs={{ order: 0 }} md={{ order: 1, size: 7 }}>
-          <UserTabs active={active} toggleTab={toggleTab} />
+        <Col xl="8" lg="7" xs={{ order: 0 }} md={{ order: 1, size: 7 }}>
+          <UserTabs
+            isFetchingOrders={isLoading}
+            orders={orders}
+            active={active}
+            toggleTab={toggleTab}
+          />
         </Col>
       </Row>
     </div>
+  ) : isFetchingUser ? (
+    <Spinner color="primary" />
   ) : (
-    <Alert color='danger'>
-      <h4 className='alert-heading'>User not found</h4>
-      <div className='alert-body'>
-        User with id: {id} doesn't exist. Check list of all Users: <Link to='/apps/user/list'>Users List</Link>
+    <Alert color="danger">
+      <h4 className="alert-heading">User not found</h4>
+      <div className="alert-body">
+        User with id: {id} doesn't exist. Check list of all Users:{" "}
+        <Link to="/dashboard/users">Users List</Link>
       </div>
     </Alert>
-  )
-}
-export default UserView
+  );
+};
+export default UserView;

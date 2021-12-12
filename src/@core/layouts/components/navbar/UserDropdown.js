@@ -42,14 +42,14 @@ const UserDropdown = () => {
   const dispatch = useDispatch();
   const [userData, setUserData] = useState(null);
 
-  const { getUser } = useUser((success) => {
+  const { getProfile } = useUser((success) => {
     setUserData(success);
   });
 
   //** ComponentDidMount
   useEffect(() => {
     if (isUserLoggedIn() !== null) {
-      getUser();
+      getProfile();
       // setUserData(jwtDecode(localStorage.getItem("auth")));
     }
   }, []);

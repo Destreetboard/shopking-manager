@@ -32,7 +32,7 @@ const CartDropdown = () => {
   );
 
   useEffect(() => {
-    setTimeout(fetchOrders, 60000);
+    setInterval(fetchOrders, 30000);
     fetchOrders();
   }, []);
 

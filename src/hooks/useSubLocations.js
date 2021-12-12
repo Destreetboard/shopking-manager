@@ -47,7 +47,7 @@ export const useSubLocations = (success, error) => {
       setIsDeletingSubLocation(false);
       return success && success();
     } catch (e) {
-      console.log(e);
+      console.log(e.message);
       setIsDeletingSubLocation(false);
       return error && error(e?.response?.data || { message: e?.message });
     }

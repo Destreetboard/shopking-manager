@@ -17,5 +17,18 @@ export const useOrders = (success, error) => {
     }
   };
 
-  return { fetchOrders, isLoading };
+  const fetchUserOrders = async (id) => {
+    setIsLoading(true);
+    try {
+      const res = await apiService.get(`/users/${id}/orders`);
+      setIsLoading(false);
+      return success && success(res.data.data.orders);
+    } catch (e) {
+      console.log(e);
+      setIsLoading(false);
+      return error && error(e?.response?.data || { message: e?.message });
+    }
+  };
+
+  return { fetchOrders, fetchUserOrders, isLoading };
 };
