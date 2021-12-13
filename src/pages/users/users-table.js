@@ -59,14 +59,14 @@ const renderClient = (row) => {
     states = ["light-success", "light-info", "light-primary"],
     color = states[stateNum];
 
-  if (row.photo) {
-    return <Avatar className="me-1" img={row.photo} width="32" height="32" />;
+  if (row?.photo) {
+    return <Avatar className="me-1" img={row?.photo} width="32" height="32" />;
   } else {
     return (
       <Avatar
         color={color || "primary"}
         className="me-1"
-        content={`${row.firstname} ${row.lastname}`}
+        content={`${row?.firstname} ${row?.lastname}`}
         initials
       />
     );
@@ -90,15 +90,17 @@ const renderRole = (row) => {
     },
   };
 
-  const Icon = roleObj[row.role] ? roleObj[row.role].icon : Edit2;
+  const Icon = roleObj[row?.role] ? roleObj[row?.role].icon : Edit2;
 
   return (
     <span className="text-truncate text-capitalize align-middle">
       <Icon
         size={18}
-        className={`${roleObj[row.role] ? roleObj[row.role].class : ""} me-50`}
+        className={`${
+          roleObj[row?.role] ? roleObj[row?.role].class : ""
+        } me-50`}
       />
-      {row.role}
+      {row?.role}
     </span>
   );
 };
@@ -263,19 +265,19 @@ const UsersList = () => {
         sortable: true,
         minWidth: "300px",
         sortField: "name",
-        selector: (row) => `${row.firstname} ${row.lastname}`,
+        selector: (row) => `${row?.firstname} ${row?.lastname}`,
         cell: (row) => (
           <div className="d-flex justify-content-left align-items-center">
             {renderClient(row)}
             <div className="d-flex flex-column">
               <Link
-                to={`/dashboard/users/${row._id}`}
+                to={`/dashboard/users/${row?._id}`}
                 className="user_name text-truncate text-body"
               >
-                <span className="fw-bolder">{`${row.firstname} ${row.lastname}`}</span>
+                <span className="fw-bolder">{`${row?.firstname} ${row?.lastname}`}</span>
               </Link>
               <small className="text-truncate text-muted mb-0">
-                {row.email}
+                {row?.email}
               </small>
             </div>
           </div>
@@ -286,7 +288,7 @@ const UsersList = () => {
         sortable: true,
         minWidth: "172px",
         sortField: "role",
-        selector: (row) => row.role,
+        selector: (row) => row?.role,
         cell: (row) => renderRole(row),
       },
       {
@@ -294,10 +296,10 @@ const UsersList = () => {
         minWidth: "200px",
         sortable: true,
         sortField: "date",
-        selector: (row) => moment(row.createdAt).format("DD MMM, YYYY."),
+        selector: (row) => moment(row?.createdAt).format("DD MMM, YYYY."),
         cell: (row) => (
           <span className="text-capitalize">
-            {moment(row.createdAt).format("DD MMM, YYYY.")}
+            {moment(row?.createdAt).format("DD MMM, YYYY.")}
           </span>
         ),
       },
@@ -306,18 +308,18 @@ const UsersList = () => {
         minWidth: "138px",
         sortable: true,
         sortField: "status",
-        selector: (row) => (row.isVerified ? "unverified" : row.status),
+        selector: (row) => (row?.isVerified ? "unverified" : row?.status),
         cell: (row) => (
           <Badge
             className="text-capitalize"
             color={
-              row.isVerified
-                ? statusObj[row.status.toLowerCase()]
+              row?.isVerified
+                ? statusObj[row?.status.toLowerCase()]
                 : statusObj["pending"]
             }
             pill
           >
-            {row.isVerified ? row.status : "unverified"}
+            {row?.isVerified ? row?.status : "unverified"}
           </Badge>
         ),
       },
@@ -334,7 +336,7 @@ const UsersList = () => {
                 <DropdownItem
                   tag={Link}
                   className="w-100"
-                  to={`/dashboard/users/${row._id}`}
+                  to={`/dashboard/users/${row?._id}`}
                 >
                   <FileText size={14} className="me-50" />
                   <span className="align-middle">Details</span>
@@ -357,7 +359,10 @@ const UsersList = () => {
                   className="w-100"
                   onClick={(e) => {
                     e.preventDefault();
-                    handleDelete(row._id, `${row.firstname} ${row.lastname}`);
+                    handleDelete(
+                      row?._id,
+                      `${row?.firstname} ${row?.lastname}`
+                    );
                   }}
                 >
                   <Trash2 size={14} className="me-50" />

@@ -47,16 +47,16 @@ const renderClient = (row) => {
     ],
     color = states[stateNum];
 
-  if (row.user.photo) {
+  if (row?.user?.photo) {
     return (
-      <Avatar className="me-50" img={row.user.photo} width="32" height="32" />
+      <Avatar className="me-50" img={row?.user?.photo} width="32" height="32" />
     );
   } else {
     return (
       <Avatar
         color={color}
         className="me-50"
-        content={`${row.user.firstname} ${row.user.lastname}`}
+        content={`${row?.user?.firstname} ${row?.user?.lastname}`}
         initials
       />
     );
@@ -214,10 +214,10 @@ const CompletedOrdersPage = () => {
         sortable: true,
         minWidth: "300px",
         sortField: "user",
-        selector: (row) => `${row.user.firstname} ${row.user.lastname}`,
+        selector: (row) => `${row?.user?.firstname} ${row?.user?.lastname}`,
         cell: (row) => {
-          const name = `${row.user.firstname} ${row.user.lastname}`,
-            email = row.user.email;
+          const name = `${row?.user?.firstname} ${row?.user?.lastname}`,
+            email = row?.user?.email;
           return (
             <div className="d-flex justify-content-left align-items-center">
               {renderClient(row)}

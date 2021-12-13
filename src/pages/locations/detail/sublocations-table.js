@@ -65,13 +65,13 @@ const SubLocationTable = ({
     () => [
       {
         name: "Address",
-        sortable: (row) => row.address,
-        selector: (row) => row.address,
+        sortable: (row) => row?.address,
+        selector: (row) => row?.address,
       },
       {
         name: "Price",
-        sortable: (row) => row.price,
-        selector: (row) => row.price,
+        sortable: (row) => row?.price,
+        selector: (row) => row?.price,
       },
       {
         name: "Actions",
@@ -88,7 +88,7 @@ const SubLocationTable = ({
               <Trash2
                 className="text-danger mx-1"
                 size={15}
-                onClick={(e) => handleDeleteSubLocation(row._id)}
+                onClick={(e) => handleDeleteSubLocation(row?._id)}
               />
             </div>
           );

@@ -64,9 +64,9 @@ const OrdersList = ({ orders, isFetchingOrders }) => {
         sortable: true,
         sortField: "orderNo",
         minWidth: "200px",
-        selector: (row) => row.orderNo,
+        selector: (row) => row?.orderNo,
         cell: (row) => (
-          <Link to={`/dashboard/orders/${row._id}`}>{`#${row.orderNo}`}</Link>
+          <Link to={`/dashboard/orders/${row?._id}`}>{`#${row?.orderNo}`}</Link>
         ),
       },
       {
@@ -74,9 +74,9 @@ const OrdersList = ({ orders, isFetchingOrders }) => {
         minWidth: "102px",
         sortField: "status",
         name: <TrendingUp size={14} />,
-        selector: (row) => row.satus,
+        selector: (row) => row?.satus,
         cell: (row) => {
-          const s = row.status;
+          const s = row?.status;
           const color =
             s === "PENDING"
               ? "warning"
@@ -103,16 +103,16 @@ const OrdersList = ({ orders, isFetchingOrders }) => {
               <Avatar
                 color={color}
                 icon={<Icon size={14} />}
-                id={`av-tooltip-${row._id}`}
+                id={`av-tooltip-${row?._id}`}
               />
               <UncontrolledTooltip
                 placement="top"
-                target={`av-tooltip-${row._id}`}
+                target={`av-tooltip-${row?._id}`}
               >
-                <span className="fw-bold">Status:</span> {row.status}
+                <span className="fw-bold">Status:</span> {row?.status}
                 <br />
                 <span className="fw-bold">Order created:</span>{" "}
-                {moment(row.createdAt).format("DD MMM, YYYY")}
+                {moment(row?.createdAt).format("DD MMM, YYYY")}
               </UncontrolledTooltip>
             </>
           );
@@ -123,8 +123,8 @@ const OrdersList = ({ orders, isFetchingOrders }) => {
         sortable: true,
         minWidth: "150px",
         sortField: "items",
-        selector: (row) => row.items.length,
-        cell: (row) => <span>{row.items.length || 0}</span>,
+        selector: (row) => row?.items.length,
+        cell: (row) => <span>{row?.items.length || 0}</span>,
       },
       {
         name: "Total Price",
@@ -132,7 +132,7 @@ const OrdersList = ({ orders, isFetchingOrders }) => {
         minWidth: "200px",
         sortField: "total",
         selector: (row) => {
-          const price = row.items
+          const price = row?.items
             .map((item) => {
               return item.price
                 ? parseInt(item.price) * parseInt(item.quantity)
@@ -140,13 +140,13 @@ const OrdersList = ({ orders, isFetchingOrders }) => {
             })
             .reduce((a, b) => a + b, 0);
           const delivery = row?.location?.subLocation.price;
-          const serviceFee = row.items
+          const serviceFee = row?.items
             .map((item) => (item.fee ? item.fee : 0))
             .reduce((a, b) => a + b, 0);
           return formatMoney(price + delivery + serviceFee);
         },
         cell: (row) => {
-          const price = row.items
+          const price = row?.items
             .map((item) => {
               return item.price
                 ? parseInt(item.price) * parseInt(item.quantity)
@@ -154,7 +154,7 @@ const OrdersList = ({ orders, isFetchingOrders }) => {
             })
             .reduce((a, b) => a + b, 0);
           const delivery = row?.location?.subLocation.price;
-          const serviceFee = row.items
+          const serviceFee = row?.items
             .map((item) => (item.fee ? item.fee : 0))
             .reduce((a, b) => a + b, 0);
           return <span>{formatMoney(price + delivery + serviceFee)}</span>;
@@ -165,8 +165,8 @@ const OrdersList = ({ orders, isFetchingOrders }) => {
         minWidth: "200px",
         name: "Last Updated",
         sortField: "lastUpdated",
-        cell: (row) => moment(row.updatedAt).format("DD MMM, YYYY"),
-        selector: (row) => moment(row.updatedAt).format("DD MMM, YYYY"),
+        cell: (row) => moment(row?.updatedAt).format("DD MMM, YYYY"),
+        selector: (row) => moment(row?.updatedAt).format("DD MMM, YYYY"),
       },
       {
         name: "Action",
@@ -174,14 +174,14 @@ const OrdersList = ({ orders, isFetchingOrders }) => {
         cell: (row) => (
           <div className="column-action d-flex align-items-center">
             <Link
-              to={`/dashboard/orders/${row._id}`}
-              id={`pw-tooltip-${row._id}`}
+              to={`/dashboard/orders/${row?._id}`}
+              id={`pw-tooltip-${row?._id}`}
             >
               <Eye size={17} className="mx-1" />
             </Link>
             <UncontrolledTooltip
               placement="top"
-              target={`pw-tooltip-${row._id}`}
+              target={`pw-tooltip-${row?._id}`}
             >
               Preview Order
             </UncontrolledTooltip>
