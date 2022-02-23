@@ -46,16 +46,16 @@ const renderClient = (row) => {
     ],
     color = states[stateNum];
 
-  if (row.user.photo) {
+  if (row?.user?.photo) {
     return (
-      <Avatar className="me-50" img={row.user.photo} width="32" height="32" />
+      <Avatar className="me-50" img={row?.user?.photo} width="32" height="32" />
     );
   } else {
     return (
       <Avatar
         color={color}
         className="me-50"
-        content={`${row.user.firstname} ${row.user.lastname}`}
+        content={`${row?.user?.firstname} ${row?.user?.lastname}`}
         initials
       />
     );
@@ -155,9 +155,9 @@ const DeclinedOrdersPage = () => {
         sortable: true,
         sortField: "orderNo",
         minWidth: "200px",
-        selector: (row) => row.orderNo,
+        selector: (row) => row?.orderNo,
         cell: (row) => (
-          <Link to={`/dashboard/orders/${row._id}`}>{`#${row.orderNo}`}</Link>
+          <Link to={`/dashboard/orders/${row?._id}`}>{`#${row?.orderNo}`}</Link>
         ),
       },
       {
@@ -165,9 +165,9 @@ const DeclinedOrdersPage = () => {
         minWidth: "102px",
         sortField: "invoiceStatus",
         name: <TrendingUp size={14} />,
-        selector: (row) => row.satus,
+        selector: (row) => row?.satus,
         cell: (row) => {
-          const s = row.status;
+          const s = row?.status;
           const color =
             s === "PENDING"
               ? "warning"
@@ -194,16 +194,16 @@ const DeclinedOrdersPage = () => {
               <Avatar
                 color={color}
                 icon={<Icon size={14} />}
-                id={`av-tooltip-${row._id}`}
+                id={`av-tooltip-${row?._id}`}
               />
               <UncontrolledTooltip
                 placement="top"
-                target={`av-tooltip-${row._id}`}
+                target={`av-tooltip-${row?._id}`}
               >
-                <span className="fw-bold">Status:</span> {row.status}
+                <span className="fw-bold">Status:</span> {row?.status}
                 <br />
                 <span className="fw-bold">Order created:</span>{" "}
-                {moment(row.createdAt).format("DD MMM, YYYY")}
+                {moment(row?.createdAt).format("DD MMM, YYYY")}
               </UncontrolledTooltip>
             </Fragment>
           );
@@ -214,10 +214,10 @@ const DeclinedOrdersPage = () => {
         sortable: true,
         minWidth: "300px",
         sortField: "user",
-        selector: (row) => `${row.user.firstname} ${row.user.lastname}`,
+        selector: (row) => `${row?.user?.firstname} ${row?.user?.lastname}`,
         cell: (row) => {
-          const name = `${row.user.firstname} ${row.user.lastname}`,
-            email = row.user.email;
+          const name = `${row?.user?.firstname} ${row?.user?.lastname}`,
+            email = row?.user?.email;
           return (
             <div className="d-flex justify-content-left align-items-center">
               {renderClient(row)}
@@ -234,8 +234,8 @@ const DeclinedOrdersPage = () => {
         sortable: true,
         minWidth: "150px",
         sortField: "items",
-        selector: (row) => row.items.length,
-        cell: (row) => <span>{row.items.length || 0}</span>,
+        selector: (row) => row?.items.length,
+        cell: (row) => <span>{row?.items.length || 0}</span>,
       },
       {
         name: "Total Price",
@@ -243,7 +243,7 @@ const DeclinedOrdersPage = () => {
         minWidth: "200px",
         sortField: "total",
         selector: (row) => {
-          const price = row.items
+          const price = row?.items
             .map((item) => {
               return item.price
                 ? parseInt(item.price) * parseInt(item.quantity)
@@ -251,13 +251,13 @@ const DeclinedOrdersPage = () => {
             })
             .reduce((a, b) => a + b, 0);
           const delivery = row?.location?.subLocation.price;
-          const serviceFee = row.items
+          const serviceFee = row?.items
             .map((item) => (item.fee ? item.fee : 0))
             .reduce((a, b) => a + b, 0);
           return formatMoney(price + delivery + serviceFee);
         },
         cell: (row) => {
-          const price = row.items
+          const price = row?.items
             .map((item) => {
               return item.price
                 ? parseInt(item.price) * parseInt(item.quantity)
@@ -265,7 +265,7 @@ const DeclinedOrdersPage = () => {
             })
             .reduce((a, b) => a + b, 0);
           const delivery = row?.location?.subLocation.price;
-          const serviceFee = row.items
+          const serviceFee = row?.items
             .map((item) => (item.fee ? item.fee : 0))
             .reduce((a, b) => a + b, 0);
           return <span>{formatMoney(price + delivery + serviceFee)}</span>;
@@ -276,8 +276,8 @@ const DeclinedOrdersPage = () => {
         minWidth: "200px",
         name: "Last Updated",
         sortField: "lastUpdated",
-        cell: (row) => moment(row.updatedAt).format("DD MMM, YYYY"),
-        selector: (row) => moment(row.updatedAt).format("DD MMM, YYYY"),
+        cell: (row) => moment(row?.updatedAt).format("DD MMM, YYYY"),
+        selector: (row) => moment(row?.updatedAt).format("DD MMM, YYYY"),
       },
       {
         name: "Action",
@@ -285,14 +285,14 @@ const DeclinedOrdersPage = () => {
         cell: (row) => (
           <div className="column-action d-flex align-items-center">
             <Link
-              to={`/dashboard/orders/${row._id}`}
-              id={`pw-tooltip-${row._id}`}
+              to={`/dashboard/orders/${row?._id}`}
+              id={`pw-tooltip-${row?._id}`}
             >
               <Eye size={17} className="mx-1" />
             </Link>
             <UncontrolledTooltip
               placement="top"
-              target={`pw-tooltip-${row._id}`}
+              target={`pw-tooltip-${row?._id}`}
             >
               Preview Order
             </UncontrolledTooltip>
