@@ -2,7 +2,7 @@ import axios from "axios";
 
 let API_URL;
 
-if (process.env === "production") {
+if (process.env.NODE_ENV === "production") {
   API_URL = "https://shopking-api.herokuapp.com/api/v1";
 } else {
   API_URL = "https://shopking-api-dev.herokuapp.com/api/v1";
