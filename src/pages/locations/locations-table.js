@@ -72,12 +72,12 @@ const LocationDTable = () => {
       {
         name: "Name",
         minWidth: "250px",
-        sortable: (row) => row.name,
-        selector: (row) => row.name,
+        sortable: (row) => row?.name,
+        selector: (row) => row?.name,
       },
       {
         name: "Sub Locations",
-        selector: (row) => row.subLocations?.length,
+        selector: (row) => row?.subLocations?.length,
       },
       {
         name: "Actions",
@@ -85,7 +85,7 @@ const LocationDTable = () => {
         cell: (row) => {
           return (
             <div className="d-flex">
-              <Link to={`/dashboard/locations/${row._id}/sub-locations`}>
+              <Link to={`/dashboard/locations/${row?._id}/sub-locations`}>
                 <Eye className="mx-1" size={15} />
               </Link>
               <Edit
@@ -97,7 +97,7 @@ const LocationDTable = () => {
               <Trash2
                 className="text-danger mx-1"
                 size={15}
-                onClick={() => handleDeleteLocation(row._id)}
+                onClick={() => handleDeleteLocation(row?._id)}
               />
             </div>
           );

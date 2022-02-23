@@ -74,8 +74,8 @@ const CategoriesTable = () => {
       {
         name: "Name",
         minWidth: "250px",
-        sortable: (row) => row.name,
-        selector: (row) => row.name,
+        sortable: (row) => row?.name,
+        selector: (row) => row?.name,
       },
       {
         name: "Actions",
@@ -92,7 +92,7 @@ const CategoriesTable = () => {
               <Trash2
                 className="text-danger mx-1"
                 size={15}
-                onClick={() => handleDeleteCategory(row._id)}
+                onClick={() => handleDeleteCategory(row?._id)}
               />
             </div>
           );

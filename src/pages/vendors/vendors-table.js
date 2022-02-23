@@ -69,8 +69,8 @@ const VendorsTable = () => {
       {
         name: "Name",
         minWidth: "250px",
-        sortable: (row) => row.name,
-        selector: (row) => row.name.toUpperCase(),
+        sortable: (row) => row?.name,
+        selector: (row) => row?.name.toUpperCase(),
       },
       {
         name: "Contact",
@@ -79,34 +79,34 @@ const VendorsTable = () => {
           <div className="d-flex justify-content-left align-items-center">
             <div className="d-flex flex-column">
               <a
-                href={`tel:${row.phone}`}
+                href={`tel:${row?.phone}`}
                 className="user_name text-truncate text-body"
               >
-                <span className="fw-bolder">{row.phone}</span>
+                <span className="fw-bolder">{row?.phone}</span>
               </a>
               <a
-                href={`mailto:${row.email}`}
+                href={`mailto:${row?.email}`}
                 className="user_name text-truncate text-body"
               >
                 <small className="text-truncate text-muted mb-0">
-                  {row.email}
+                  {row?.email}
                 </small>
               </a>
               <small className="text-truncate text-muted mb-0">
-                {row.address}
+                {row?.address}
               </small>
             </div>
           </div>
         ),
-        sortable: (row) => `${row.email} ${row.phone} ${row.address}`,
+        sortable: (row) => `${row?.email} ${row?.phone} ${row?.address}`,
       },
       {
         name: "Website",
         minWidth: "180px",
-        sortable: (row) => row.website,
+        sortable: (row) => row?.website,
         selector: (row) => (
-          <a href={row.website} target="_blank">
-            {row.website}
+          <a href={row?.website} target="_blank">
+            {row?.website}
           </a>
         ),
       },
@@ -114,13 +114,13 @@ const VendorsTable = () => {
         name: "Categories",
         minWidth: "250px",
         selector: (row) => {
-          return row.categories.map((c) => (
+          return row?.categories.map((c) => (
             <Badge key={c._id} color="light-info">
               {c.name}
             </Badge>
           ));
         },
-        sortable: (row) => row.catgories.map((c) => c.name),
+        sortable: (row) => row?.catgories.map((c) => c.name),
       },
       {
         name: "Actions",
@@ -137,7 +137,7 @@ const VendorsTable = () => {
               <Trash2
                 className="text-danger mx-1"
                 size={15}
-                onClick={() => handleDeleteCategory(row._id)}
+                onClick={() => handleDeleteCategory(row?._id)}
               />
             </div>
           );
