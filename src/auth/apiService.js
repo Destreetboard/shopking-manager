@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const apiService = axios.create({
-  baseURL: "https://shopking-api.herokuapp.com/api/v1",
+  baseURL:
+    process.env.API_URL || "https://shopking-api-dev.herokuapp.com/api/v1",
 });
 
 apiService.interceptors.request.use(
