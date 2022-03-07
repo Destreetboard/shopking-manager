@@ -12,6 +12,10 @@ import {
   ChevronDown,
   X,
   CheckCircle,
+  Share,
+  Printer,
+  File,
+  Grid,
 } from "react-feather";
 import {
   Badge,
@@ -29,6 +33,7 @@ import {
   CardTitle,
   CardHeader,
   Spinner,
+  UncontrolledButtonDropdown,
 } from "reactstrap";
 import moment from "moment";
 import Sidebar from "./Sidebar";
@@ -192,6 +197,50 @@ const UsersList = () => {
     { value: "active", label: "Active", number: 2 },
     { value: "inactive", label: "Inactive", number: 3 },
   ];
+
+  // ** Converts table to CSV
+  function convertArrayOfObjectsToCSV(array) {
+    let result;
+
+    const columnDelimiter = ",";
+    const lineDelimiter = "\n";
+    const keys = Object.keys(users[0]);
+
+    result = "";
+    result += keys.join(columnDelimiter);
+    result += lineDelimiter;
+
+    array.forEach((item) => {
+      let ctr = 0;
+      keys.forEach((key) => {
+        if (ctr > 0) result += columnDelimiter;
+
+        result += item[key];
+
+        ctr++;
+      });
+      result += lineDelimiter;
+    });
+
+    return result;
+  }
+
+  // ** Downloads CSV
+  function downloadCSV(array) {
+    const link = document.createElement("a");
+    let csv = convertArrayOfObjectsToCSV(array);
+    if (csv === null) return;
+
+    const filename = "shoopking-users-list.csv";
+
+    if (!csv.match(/^data:text\/csv/i)) {
+      csv = `data:text/csv;charset=utf-8,${csv}`;
+    }
+
+    link.setAttribute("href", encodeURI(csv));
+    link.setAttribute("download", filename);
+    link.click();
+  }
 
   const handleFilter = (value) => {
     let updatedData = [];
@@ -420,8 +469,37 @@ const UsersList = () => {
       </Card>
 
       <Card className="overflow-hidden">
-        <CardHeader className="flex-md-row flex-column align-md-items-center align-items-start">
+        <CardHeader className="flex-md-row flex-column align-md-items-center align-items-start border-bottom">
           <CardTitle tag="h4">Users</CardTitle>
+          <div className="d-flex mt-md-0 mt-1">
+            <UncontrolledButtonDropdown>
+              <DropdownToggle color="secondary" caret outline>
+                <Share size={15} />
+                <span className="align-middle ms-50">Export</span>
+              </DropdownToggle>
+              <DropdownMenu>
+                {/* <DropdownItem className="w-100">
+                  <Printer size={15} />
+                  <span className="align-middle ms-50">Print</span>
+                </DropdownItem> */}
+                <DropdownItem
+                  className="w-100"
+                  onClick={() => downloadCSV(users)}
+                >
+                  <FileText size={15} />
+                  <span className="align-middle ms-50">CSV</span>
+                </DropdownItem>
+                {/* <DropdownItem className="w-100">
+                  <Grid size={15} />
+                  <span className="align-middle ms-50">Excel</span>
+                </DropdownItem>
+                <DropdownItem className="w-100">
+                  <File size={15} />
+                  <span className="align-middle ms-50">PDF</span>
+                </DropdownItem> */}
+              </DropdownMenu>
+            </UncontrolledButtonDropdown>
+          </div>
         </CardHeader>
         <Row className="justify-content-end mx-0">
           <Col
