@@ -232,6 +232,17 @@ const UserInfoCard = ({ user, orders, pushUser }) => {
                 <small>Balance</small>
               </div>
             </div>
+            <div className="d-flex align-items-start">
+              <Badge color="light-primary" className="rounded p-75">
+                {"\u20A6"}
+              </Badge>
+              <div className="ms-75">
+                <h4 className="mb-0">
+                  {formatNumber(user.referral?.points || 0)}
+                </h4>
+                <small>Points</small>
+              </div>
+            </div>
           </div>
           <h4 className="fw-bolder border-bottom pb-50 mb-1">Details</h4>
           <div className="info-container">

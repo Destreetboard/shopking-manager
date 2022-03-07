@@ -73,6 +73,7 @@ const UserView = () => {
             orders={orders}
             active={active}
             toggleTab={toggleTab}
+            user={user}
           />
         </Col>
       </Row>
