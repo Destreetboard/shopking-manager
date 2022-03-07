@@ -13,9 +13,6 @@ import {
   X,
   CheckCircle,
   Share,
-  Printer,
-  File,
-  Grid,
 } from "react-feather";
 import {
   Badge,
@@ -339,6 +336,18 @@ const UsersList = () => {
         sortField: "role",
         selector: (row) => row?.role,
         cell: (row) => renderRole(row),
+      },
+      {
+        name: "Referrals",
+        sortable: true,
+        minWidth: "150px",
+        sortField: "referrals",
+        selector: (row) => row?.referral?.referrals.length || 0,
+        cell: (row) => (
+          <span className="text-capitalize">
+            {row?.referral?.referrals.length || 0}
+          </span>
+        ),
       },
       {
         name: "Date Joined",
