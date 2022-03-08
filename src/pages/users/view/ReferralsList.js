@@ -195,7 +195,7 @@ const ReferralsList = ({ user }) => {
           <Row>
             <Col md="6">
               <Avatar
-                initials
+                // initials
                 color="light-success"
                 className="rounded mt-3 mb-2"
                 content={`${referrals?.length || 0}`}
