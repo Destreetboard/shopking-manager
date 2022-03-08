@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Row, Col, Alert, Spinner } from "reactstrap";
+import { X } from "react-feather";
 import UserTabs from "./Tabs";
 import UserInfoCard from "./UserInfoCard";
 import "@styles/react/apps/app-users.scss";
