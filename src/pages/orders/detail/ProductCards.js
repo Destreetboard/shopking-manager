@@ -47,7 +47,7 @@ const ProductCards = ({ items, user, onUpdateOrder, order }) => {
                     href="#"
                     onClick={(e) => e.preventDefault()}
                   >
-                    {`${user.firstname} ${user.lastname}`}
+                    {`${user?.firstname} ${user?.lastname}`}
                   </a>
                 </CardText>
               </h6>

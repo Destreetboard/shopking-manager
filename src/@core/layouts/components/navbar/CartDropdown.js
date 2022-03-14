@@ -86,7 +86,7 @@ const CartDropdown = () => {
                         </Link>
                       </h6>
                       <small className="cart-item-by">
-                        by {item.user.firstname}
+                        by {item?.user?.firstname}
                       </small>
                     </div>
                     <div className="cart-item-qty">{item.items.length}</div>
