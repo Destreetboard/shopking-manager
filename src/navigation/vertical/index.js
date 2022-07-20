@@ -10,7 +10,7 @@
 import dashboards from "./dashboards";
 import orders from "./orders";
 import users from "./users";
-import locations from "./locations";
+// import locations from "./locations";
 import categories from "./categories";
 import vendors from "./vendors";
 import settings from "./settings";
@@ -20,7 +20,7 @@ export default [
   ...dashboards,
   ...orders,
   ...users,
-  ...locations,
+  // ...locations,
   ...categories,
   ...vendors,
   ...settings,

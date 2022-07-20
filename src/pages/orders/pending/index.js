@@ -163,7 +163,7 @@ const PendingOrdersPage = () => {
       {
         sortable: true,
         minWidth: "102px",
-        sortField: "invoiceStatus",
+        sortField: "status",
         name: <TrendingUp size={14} />,
         selector: (row) => row?.satus,
         cell: (row) => {
@@ -243,31 +243,15 @@ const PendingOrdersPage = () => {
         minWidth: "200px",
         sortField: "total",
         selector: (row) => {
-          const price = row?.items
-            .map((item) => {
-              return item.price
-                ? parseInt(item.price) * parseInt(item.quantity)
-                : parseInt(item.estimatedPrice) * parseInt(item.quantity);
-            })
-            .reduce((a, b) => a + b, 0);
-          const delivery = row?.location?.subLocation.price;
-          const serviceFee = row?.items
-            .map((item) => (item.fee ? item.fee : 0))
-            .reduce((a, b) => a + b, 0);
+          const price = row.totalAmount || row.estimatedAmount;
+          const delivery = row?.delivery;
+          const serviceFee = row?.serviceFee;
           return formatMoney(price + delivery + serviceFee);
         },
         cell: (row) => {
-          const price = row?.items
-            .map((item) => {
-              return item.price
-                ? parseInt(item.price) * parseInt(item.quantity)
-                : parseInt(item.estimatedPrice) * parseInt(item.quantity);
-            })
-            .reduce((a, b) => a + b, 0);
-          const delivery = row?.location?.subLocation.price;
-          const serviceFee = row?.items
-            .map((item) => (item.fee ? item.fee : 0))
-            .reduce((a, b) => a + b, 0);
+          const price = row.totalAmount || row.estimatedAmount;
+          const delivery = row?.delivery;
+          const serviceFee = row?.serviceFee;
           return <span>{formatMoney(price + delivery + serviceFee)}</span>;
         },
       },
