@@ -56,22 +56,6 @@ const CartDropdown = () => {
             }}
           >
             {orders.map((item) => {
-              const price = item.items
-                .map((it) => {
-                  return (
-                    (it.price
-                      ? parseInt(it.price)
-                      : parseInt(it.estimatedPrice)) * parseInt(it.quantity)
-                  );
-                })
-                .reduce((a, b) => a + b, 0);
-              const delivery = item?.location?.subLocation.price;
-              const serviceFee = item.items
-                .map((it) => (it.fee ? it.fee : 0))
-                .reduce((a, b) => a + b, 0);
-
-              // console.log(price, delivery, serviceFee);
-
               return (
                 <div key={item._id} className="list-item align-items-center">
                   <div className="list-item-body flex-grow-1">
@@ -86,12 +70,12 @@ const CartDropdown = () => {
                         </Link>
                       </h6>
                       <small className="cart-item-by">
-                        by {item.user.firstname}
+                        by {item?.user?.firstname}
                       </small>
                     </div>
                     <div className="cart-item-qty">{item.items.length}</div>
                     <h5 className="cart-item-price">
-                      {formatMoney(price + delivery + serviceFee)}
+                      {formatMoney(item.price + item.delivery + item.totalFee)}
                     </h5>
                   </div>
                 </div>

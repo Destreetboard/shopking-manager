@@ -72,8 +72,9 @@ const Locations = () => {
 
         <CardBody>
           <Form
+            method="POST"
             onSubmit={(e) => {
-              e.preventDefeault();
+              e.preventDefault();
               handleCreateLocation();
             }}
           >

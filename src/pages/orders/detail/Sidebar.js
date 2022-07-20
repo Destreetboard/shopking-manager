@@ -69,7 +69,10 @@ const Sidebar = ({ order, sidebarOpen, onUpdateOrder, setSidebarOpen }) => {
         }
       );
     }
-    updateOrder(order._id, { status: status.value });
+    const totalAmount = order.items
+      .map((it) => parseInt(it.price) * parseInt(it.quantity))
+      .reduce((a, b) => a + b, 0);
+    updateOrder(order._id, { status: status.value, totalAmount });
   };
 
   useEffect(() => {
@@ -81,20 +84,11 @@ const Sidebar = ({ order, sidebarOpen, onUpdateOrder, setSidebarOpen }) => {
         );
       })
       .reduce((a, b) => a + b, 0);
-    const estimated = order.items
-      .map((it) => {
-        return parseInt(it.estimatedPrice) * parseInt(it.quantity);
-      })
-      .reduce((a, b) => a + b, 0);
-    const delivery = order?.location?.subLocation?.price;
-    const fee = order.items
-      .map((it) => (it.fee ? it.fee : 0))
-      .reduce((a, b) => a + b, 0);
 
-    if (delivery) setDeliveryFee(delivery);
-    if (fee) setServiceFee(fee);
-    if (total) setTotalPrice(total);
-    if (estimated) setTotalEstPrice(estimated);
+    setDeliveryFee(order.delivery);
+    setServiceFee(order.totalFee);
+    setTotalPrice(total);
+    setTotalEstPrice(order.estimatedAmount);
   }, [order]);
 
   return (
@@ -122,28 +116,26 @@ const Sidebar = ({ order, sidebarOpen, onUpdateOrder, setSidebarOpen }) => {
             </Row>
             <CardBody>
               <div className="multi-range-price">
-                <h6 className="filter-title mt-0">Location</h6>
-                <p>{order?.location?.name}</p>
-              </div>
-              <div className="multi-range-price">
-                <h6 className="filter-title mt-0">Destination</h6>
-                <p>{order?.location?.subLocation?.address}</p>
+                <h6 className="filter-title mt-0">Delivery Address</h6>
+                <p>{order?.address.location.place}</p>
               </div>
               <div className="multi-range-price">
                 <h6 className="filter-title mt-0">Total Estimated Price</h6>
-                <p className="text-warning">{formatMoney(totalEstPrice)}</p>
+                <p className="text-warning">
+                  {formatMoney(order.estimatedAmount)}
+                </p>
               </div>
               <div className="multi-range-price">
                 <h6 className="filter-title mt-0">Total Price</h6>
-                <p className="text-primary">{formatMoney(totalPrice)}</p>
+                <p className="text-primary">{formatMoney(order.totalAmount)}</p>
               </div>
               <div className="multi-range-price">
                 <h6 className="filter-title mt-0">Delivery Fee</h6>
-                <p>{formatMoney(deliveryFee)}</p>
+                <p>{formatMoney(order.delivery)}</p>
               </div>
               <div className="multi-range-price">
                 <h6 className="filter-title mt-0">Service Fee</h6>
-                <p>{formatMoney(serviceFee)}</p>
+                <p>{formatMoney(order.totalFee)}</p>
               </div>
               <div className="multi-range-price">
                 <h6 className="filter-title mt-0">Order Total</h6>
