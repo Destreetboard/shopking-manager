@@ -127,7 +127,7 @@ const Sidebar = ({ order, sidebarOpen, onUpdateOrder, setSidebarOpen }) => {
               </div>
               <div className="multi-range-price">
                 <h6 className="filter-title mt-0">Total Price</h6>
-                <p className="text-primary">{formatMoney(order.totalAmount)}</p>
+                <p className="text-primary">{formatMoney(totalPrice)}</p>
               </div>
               <div className="multi-range-price">
                 <h6 className="filter-title mt-0">Delivery Fee</h6>
@@ -140,7 +140,7 @@ const Sidebar = ({ order, sidebarOpen, onUpdateOrder, setSidebarOpen }) => {
               <div className="multi-range-price">
                 <h6 className="filter-title mt-0">Order Total</h6>
                 <p className="text-primary">
-                  {formatMoney(totalPrice + serviceFee + deliveryFee)}
+                  {formatMoney(`${totalPrice + serviceFee + deliveryFee}`)}
                 </p>
               </div>
 

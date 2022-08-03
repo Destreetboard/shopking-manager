@@ -241,7 +241,7 @@ const OrdersPage = () => {
         cell: (row) => {
           const price = row.totalAmount || row.estimatedAmount;
           const delivery = row?.delivery;
-          const serviceFee = row?.serviceFee;
+          const serviceFee = row?.totalFee;
           return <span>{formatMoney(price + delivery + serviceFee)}</span>;
         },
       },
